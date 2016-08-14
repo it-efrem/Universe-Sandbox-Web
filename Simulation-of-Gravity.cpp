@@ -49,53 +49,79 @@ public:
 	}
 };
 
-//Сила гравитации между объектами
+//Сила гравитации между 2-я объектами
 float gravityStrong(float x1, float x2, float y1, float y2, int m1, int m2, float lower)
 {
-	int a = abs(x2 - x1);
-	int b = abs(y2 - y1);
-	int r = pow(a, 2) + pow(b, 2);
+	int a = 0, b = 0;
+
+	if (x1 > x2)
+		a = x1 - x2;
+	if (x1 < x2)
+		a = x2 - x1;
+	if (y1 > y2)
+		b = y1 - y2;
+	if (y1 < y2)
+		b = y2 - y1;
+
+	int r = a + b;
 	return (6.67408f * (m1*m2 / r)) / lower;
 }
 
 //Движение объектов друг к другу
-void moveTo(Planet *p1, Planet *p2, float g)
+void moveTo(Planet **pl)
 {
-		if (p2->position.x > p1->position.x)
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
 		{
-			p1->acceleration.x += g;
-			p2->acceleration.x -= g;
-		}
-		if (p2->position.x < p1->position.x)
-		{
-			p2->acceleration.x += g;
-			p1->acceleration.x -= g;
-		}
+			if (i == j)
+				continue;
 
-		if (p2->position.y > p1->position.y)
-		{
-			p1->acceleration.y += g;
-			p2->acceleration.y -= g;
+			float g = gravityStrong(pl[i]->position.x, pl[j]->position.x, pl[i]->position.y, pl[j]->position.y, pl[i]->m, pl[j]->m, 6600000);
+
+			if (pl[i]->position.x > pl[j]->position.x)
+			{
+				pl[i]->acceleration.x -= g * ((float)pl[j]->m / pl[i]->m);
+				pl[j]->acceleration.x += g * ((float)pl[i]->m / pl[j]->m);
+			}
+			if (pl[i]->position.x < pl[j]->position.x)
+			{
+				pl[i]->acceleration.x += g * ((float)pl[j]->m / pl[i]->m);
+				pl[j]->acceleration.x -= g * ((float)pl[i]->m / pl[j]->m);
+			}
+			if (pl[i]->position.y > pl[j]->position.y)
+			{
+				pl[i]->acceleration.y -= g * ((float)pl[j]->m / pl[i]->m);
+				pl[j]->acceleration.y += g * ((float)pl[i]->m / pl[j]->m);
+			}
+			if (pl[i]->position.y < pl[j]->position.y)
+			{
+				pl[i]->acceleration.y += g * ((float)pl[j]->m / pl[i]->m);
+				pl[j]->acceleration.y -= g * ((float)pl[i]->m / pl[j]->m);
+			}
 		}
-		if (p2->position.y < p1->position.y)
-		{
-			p2->acceleration.y += g;
-			p1->acceleration.y -= g;
-		}
+	}
 }
 
+//Земля и 3 луны
+Planet planet1(Vector2(-150, -150), Vector2(5, 0), 5, 735);
+Planet planet2(Vector2(150, -150), Vector2(0, 5), 5, 735);
+Planet planet3(Vector2(384, 0), Vector2(0, 7), 10, 735);
+Planet planet4(Vector2(0, 0), Vector2(0, -0.1f), 12, 5973);
 
-Planet planet1(Vector2(-400, 134), Vector2(4.3f, 0), 5, 73.5f);
-Planet planet2(Vector2(-400, -250), Vector2(0, 0), 15, 5970);
+
+Planet *planets[4] = {&planet1, &planet2, &planet3, &planet4};
 
 void Draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3i(250, 0, 0);
+	glColor3i(50, 0, 0);
 
 	planet1.Draw();
 	planet2.Draw();
+	planet3.Draw();
+	planet4.Draw();
 
 	glutSwapBuffers();
 }
@@ -105,8 +131,6 @@ void Update(int)
 	glutPostRedisplay();
 	glutTimerFunc(50, Update, 0);
 
-	float g = gravityStrong(planet1.position.x, planet2.position.x, planet1.position.y, planet2.position.y, planet1.m, planet2.m, 1000);
-
 	//Двигаем объекты
 	planet1.position.x += planet1.acceleration.x;
 	planet1.position.y += planet1.acceleration.y;
@@ -114,12 +138,18 @@ void Update(int)
 	planet2.position.x += planet2.acceleration.x;
 	planet2.position.y += planet2.acceleration.y;
 
+	planet3.position.x += planet3.acceleration.x;
+	planet3.position.y += planet3.acceleration.y;
+
+	planet4.position.x += planet4.acceleration.x;
+	planet4.position.y += planet4.acceleration.y;
+
 	//Если планеты не столкнулись
 	//if ((planet1.position.x != planet2.position.x) && (planet1.position.y != planet2.position.y))
 	//{
-		moveTo(&planet1, &planet2, g);
+	moveTo(planets);
 
-		std::cout << planet1.acceleration.y << std::endl;
+		std::cout << planet1.acceleration.x << '\t' << planet2.acceleration.x << std::endl;
 	//}
 }
 
