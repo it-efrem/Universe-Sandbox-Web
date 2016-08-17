@@ -1,11 +1,13 @@
-/*
-Радиус объекта не рекомендуется ставить меньше 20, иначе возможны проскоки на высоких скоростях
-Массу объекта лучше не привышать 99999
+п»ї/*
+Recommendation:
+Radius of objects set don't less 20
+Mass of objects don't more 99999
 */
 
 #include "stdafx.h"
 #include <iostream>
 #include <gl\glut.h>
+#include <windows.h>
 #include <math.h>
 #include <ctime>
 #include <vector>
@@ -13,7 +15,8 @@
 int width = 1300;
 int height = 700;
 
-float thousandsKilometersPixel = 1;
+//Scale for camera
+float thousandsKilometersPixel = 2.5f;
 
 void Start()
 {
@@ -30,17 +33,20 @@ struct Vector2
 	Vector2(float _x, float _y) : x(_x), y(_y)
 	{}
 
-	//Профиксить перегрузку
-	Vector2 operator+= (Vector2& vector2)
+	Vector2& operator += (Vector2 &vector)
 	{
-		return Vector2(x + vector2.x, y + vector2.y);
+		this->x += vector.x;
+		this->y += vector.y;
+		return *this;
+	}
+
+	Vector2& operator -= (Vector2 &vector)
+	{
+		this->x -= vector.x;
+		this->y += vector.y;
+		return *this;
 	}
 };
-
-/*Vector2 Vector2::operator+= (Vector2 &vector1, const Vector2 &vector2)
-{
-return Vector2(vector1.x + vector2.x, vector2.y + vector2.y);
-}*/
 
 struct Color
 {
@@ -49,19 +55,17 @@ struct Color
 	{}
 };
 
-class СelestialObject
+class РЎelestialObject
 {
 	Vector2 position;
+	Vector2 acceleration;
 	Color color;
 	int r, m;
 public:
-	Vector2 acceleration;
-	bool enable;
-
-	СelestialObject() : enable(true), position(Vector2(0, 0)), acceleration(Vector2(0, 0)), r(10), m(500), color(Color(0, 0, 0))
+	РЎelestialObject() : position(Vector2(0, 0)), acceleration(Vector2(0, 0)), r(10), m(500), color(Color(0, 0, 0))
 	{}
 
-	СelestialObject(Vector2 _pos, Vector2 _vel, int _r, int _m, Color _color) : enable(true), position(_pos), acceleration(_vel), r(_r), m(_m), color(_color)
+	РЎelestialObject(Vector2 _pos, Vector2 _vel, int _r, int _m, Color _color) : position(_pos), acceleration(_vel), r(_r), m(_m), color(_color)
 	{}
 
 	void Draw()
@@ -77,18 +81,27 @@ public:
 
 	Vector2 getPosition()
 	{
-		return position;
+		return this->position;
 	}
 
-	void addedPosition(Vector2 vector)
+	void addedPosition(Vector2 &vector)
 	{
-		position.x += vector.x;
-		position.y += vector.y;
+		this->position += vector;
+	}
+
+	Vector2 getAcceleration()
+	{
+		return this->acceleration;
+	}
+
+	void addedAcceleration(Vector2 &vector)
+	{
+		this->acceleration += vector;
 	}
 
 	int getRadius()
 	{
-		return r;
+		return this->r;
 	}
 
 	void addRadius(float r)
@@ -98,7 +111,7 @@ public:
 
 	int getMass()
 	{
-		return m;
+		return this->m;
 	}
 
 	void addMass(int m)
@@ -109,7 +122,7 @@ public:
 
 class Space
 {
-	std::vector<СelestialObject*> objectsArray;
+	std::vector<РЎelestialObject*> objectsArray;
 	float ForceOfGravity(bool &collision, float x1, float x2, float y1, float y2, int r1, int r2, int m1, int m2)
 	{
 		float a = 0, b = 0;
@@ -125,96 +138,104 @@ class Space
 
 		float r = (a + b);
 
-		//Если произошло столкновение
-		if (r <= (r1 + r2)/1.5f)
+		//Clashed?
+		if (r <= (r1 + r2) / 1.5f)
 		{
 			collision = true;
 			return 0.001f;
 		}
-
-		return ((6.67408f * (m1*m2 / pow(r,2))) / 6674081);
+		return (m1*m2 / pow(r, 2)) / 500000;
 	}
 public:
 	Space()
 	{}
 
-	void add(СelestialObject object)
+	void add(РЎelestialObject &object)
 	{
-		objectsArray.push_back(new СelestialObject(object));
+		objectsArray.push_back(new РЎelestialObject(object));
 	}
 
 	void accelerationObjects()
 	{
 		bool collision = false;
+		int countPlanets = (int)objectsArray.size();
+		int *cP = &countPlanets;
 
-		for (int i = 0; i < (int)objectsArray.size(); i++)
+		for (int i = 0; i < *cP; i++)
 		{
-			for (int j = 0; j < (int)objectsArray.size() && (i != j); j++)
+			for (int j = 0; j < *cP && (i != j); j++)
 			{
 				float fG = ForceOfGravity(collision, objectsArray.at(i)->getPosition().x, objectsArray.at(j)->getPosition().x, objectsArray.at(i)->getPosition().y, objectsArray.at(j)->getPosition().y, objectsArray.at(i)->getRadius(), objectsArray.at(j)->getRadius(), objectsArray.at(i)->getMass(), objectsArray.at(j)->getMass());
+
+				/*std::cout << "i (" << objectsArray.at(i)->getMass() << "): \t " << i << " \t j(" << objectsArray.at(j)->getMass() << "): \t " << j << std::endl;
+				if (collision) std::cout << "=== COLLISION !!! ===" << std::endl;*/
 
 				float massJtoI = ((float)objectsArray.at(j)->getMass() / objectsArray.at(i)->getMass());
 				float massItoJ = ((float)objectsArray.at(i)->getMass() / objectsArray.at(j)->getMass());
 
-				float fGmassJtoI = fG * massJtoI * 2;
-				float fGmassItoJ = fG * massItoJ * 2;
+				float fGmassJtoI = fG * massJtoI;
+				float fGmassItoJ = fG * massItoJ;
 
-				//Если произошло столкновение
+				//Clashed?
+				/*
+				РџРѕС‡РµРјСѓ РїСЂРё РєРѕР»Р»РёР·РёРё i Рё j СЃР±СЂР°СЃРёРІР°СЋС‚СЃСЏ?
+				*/
 				if (collision)
 				{
 					if (objectsArray.at(j)->getMass() > objectsArray.at(i)->getMass())
 					{
-						objectsArray.at(j)->acceleration.x += objectsArray.at(i)->acceleration.x * massItoJ;
-						objectsArray.at(j)->acceleration.y += objectsArray.at(i)->acceleration.y * massItoJ;
+						objectsArray.at(j)->addedAcceleration(
+							Vector2(objectsArray.at(i)->getAcceleration().x * massItoJ / 2,
+									objectsArray.at(i)->getAcceleration().y * massItoJ / 2));
 
-						//Изменение большего объета
+						//Change big object
 						objectsArray.at(j)->addMass(objectsArray.at(i)->getMass() * 0.9f);
 						objectsArray.at(j)->addRadius(objectsArray.at(i)->getRadius() * massItoJ);
-						//Уничтожение меньшего
+
+						//Delete small
+						delete objectsArray[i];
 						objectsArray.erase(objectsArray.begin() + i);
 
-						//Исключение попытки просчета для удаленного объекта
-						if (i = (int)objectsArray.size())
-							break;
+						*cP--;
 					}
 					else
 					{
-						objectsArray.at(i)->acceleration.x += objectsArray.at(j)->acceleration.x * massJtoI;
-						objectsArray.at(i)->acceleration.y += objectsArray.at(j)->acceleration.y * massJtoI;
+						objectsArray.at(i)->addedAcceleration(
+							Vector2(objectsArray.at(j)->getAcceleration().x * massJtoI / 2,
+									objectsArray.at(j)->getAcceleration().y * massJtoI / 2));
 
-						//Изменение большего объета
+						//Change big object
 						objectsArray.at(i)->addMass(objectsArray.at(j)->getMass() * 0.9f);
 						objectsArray.at(i)->addRadius(objectsArray.at(j)->getRadius() * massJtoI);
-						//Уничтожение меньшего
+						//Delete small
+						delete objectsArray[j];
 						objectsArray.erase(objectsArray.begin() + j);
 
-						//Исключение попытки просчета для удаленного объекта
-						if (i = (int)objectsArray.size())
-							break;
+						*cP--;
 					}
 				}
 				if (!collision)
 				{
-					//Добавление ускорения
+					//Added acceleration
 					if (objectsArray.at(i)->getPosition().x > objectsArray.at(j)->getPosition().x)
 					{
-						objectsArray.at(i)->acceleration.x -= fGmassJtoI;
-						objectsArray.at(j)->acceleration.x += fGmassItoJ;
+						objectsArray.at(i)->addedAcceleration(Vector2(-fGmassJtoI, 0));
+						objectsArray.at(j)->addedAcceleration(Vector2(fGmassItoJ, 0));
 					}
 					if (objectsArray.at(i)->getPosition().x < objectsArray.at(j)->getPosition().x)
 					{
-						objectsArray.at(i)->acceleration.x += fGmassJtoI;
-						objectsArray.at(j)->acceleration.x -= fGmassItoJ;
+						objectsArray.at(i)->addedAcceleration(Vector2(fGmassJtoI, 0));
+						objectsArray.at(j)->addedAcceleration(Vector2(-fGmassItoJ, 0));
 					}
 					if (objectsArray.at(i)->getPosition().y > objectsArray.at(j)->getPosition().y)
 					{
-						objectsArray.at(i)->acceleration.y -= fGmassJtoI;
-						objectsArray.at(j)->acceleration.y += fGmassItoJ;
+						objectsArray.at(i)->addedAcceleration(Vector2(0, -fGmassJtoI));
+						objectsArray.at(j)->addedAcceleration(Vector2(0, fGmassItoJ));
 					}
 					if (objectsArray.at(i)->getPosition().y < objectsArray.at(j)->getPosition().y)
 					{
-						objectsArray.at(i)->acceleration.y += fGmassJtoI;
-						objectsArray.at(j)->acceleration.y -= fGmassItoJ;
+						objectsArray.at(i)->addedAcceleration(Vector2(0, fGmassJtoI));
+						objectsArray.at(j)->addedAcceleration(Vector2(0, -fGmassItoJ));
 					}
 				}
 			}
@@ -223,13 +244,13 @@ public:
 
 	void moveObjects()
 	{
-		for (int i = 0; i < (int)objectsArray.size() && objectsArray.at(i)->enable; i++)
-			objectsArray.at(i)->addedPosition(objectsArray.at(i)->acceleration);
+		for (int i = 0; i < (int)objectsArray.size(); i++)
+			objectsArray.at(i)->addedPosition(objectsArray.at(i)->getAcceleration());
 	}
 
 	void DrawingAllObjects()
 	{
-		for (int i = 0; i < (int)objectsArray.size() /*&& objectsArray.at(i)->enable*/; i++)
+		for (int i = 0; i < (int)objectsArray.size(); i++)
 		{
 			objectsArray.at(i)->Draw();
 		}
@@ -250,7 +271,7 @@ void Draw()
 void Update(int)
 {
 	glutPostRedisplay();
-	glutTimerFunc(1, Update, 0);
+	glutTimerFunc(25, Update, 0);
 
 	gravity.accelerationObjects();
 	gravity.moveObjects();
@@ -258,9 +279,21 @@ void Update(int)
 
 int main(int argc, char * argv[])
 {
-	//Добавление объектов
-	gravity.add(СelestialObject(Vector2(0, -100), Vector2(-0.1f, 0), 15, 1000, Color(0, 0, 0)));
-	gravity.add(СelestialObject(Vector2(-200, 100), Vector2(0.1f, 0), 15, 1000, Color(0, 0, 0)));
+	//Added objects
+
+	//gravity.add(РЎelestialObject(Vector2(0, -100), Vector2(0, 0), 15, 5973, Color(0, 0, 255)));
+	//gravity.add(РЎelestialObject(Vector2(0, 184), Vector2(0.6f, 0), 4, 735, Color(0, 0, 0)))
+
+	srand(time(0));
+	for (int i = 1; i != 50; i++)
+	{
+		int r = rand() % 20 + 5;
+		int m = r * 160;
+		Vector2 position(1500 - rand() % 3000, 750 - rand() % 1500);
+		Vector2 direction(1 - rand() % 2, (1 - rand() % 2));
+		Color color(0, 0, 0);
+		gravity.add(РЎelestialObject(position, direction, r, m, color));
+	}
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL);
