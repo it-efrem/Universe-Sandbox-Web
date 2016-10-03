@@ -10,7 +10,7 @@
 #include "Class/CelestialObject.h"
 
 Space gravity;
-Display display(1300, 700, 3.5, 1);
+Display display(1300, 700, 3, 1);
 
 void Start()
 {

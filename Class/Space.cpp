@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Space.h"
 #include <cmath>
 
@@ -36,8 +37,8 @@ void Space::accelerationObjects()
 		{
 			float fG = ForceOfGravity(collision, objectsArray[i], objectsArray[j]);
 
-			/*std::cout << "i (" << objectsArray.at(i)->getMass() << "): \t " << i << " \t j(" << objectsArray.at(j)->getMass() << "): \t " << j << std::endl;
-			if (collision) std::cout << "=== COLLISION !!! ===" << std::endl;*/
+			//std::cout << "i (" << objectsArray.at(i)->getMass() << "): \t " << i << " \t j(" << objectsArray.at(j)->getMass() << "): \t " << j << std::endl;
+			//if (collision) std::cout << "=== COLLISION !!! ===" << std::endl;
 
 			float massJtoI = ((float)objectsArray.at(j)->getMass() / objectsArray.at(i)->getMass());
 			float massItoJ = ((float)objectsArray.at(i)->getMass() / objectsArray.at(j)->getMass());
@@ -86,26 +87,16 @@ void Space::accelerationObjects()
 			if (!collision)
 			{
 				//Added acceleration
-				if (objectsArray.at(i)->getPosition().x > objectsArray.at(j)->getPosition().x)
-				{
-					objectsArray.at(i)->addedAcceleration(Vector2(-fGmassJtoI, 0));
-					objectsArray.at(j)->addedAcceleration(Vector2(fGmassItoJ, 0));
-				}
-				if (objectsArray.at(i)->getPosition().x < objectsArray.at(j)->getPosition().x)
-				{
-					objectsArray.at(i)->addedAcceleration(Vector2(fGmassJtoI, 0));
-					objectsArray.at(j)->addedAcceleration(Vector2(-fGmassItoJ, 0));
-				}
-				if (objectsArray.at(i)->getPosition().y > objectsArray.at(j)->getPosition().y)
-				{
-					objectsArray.at(i)->addedAcceleration(Vector2(0, -fGmassJtoI));
-					objectsArray.at(j)->addedAcceleration(Vector2(0, fGmassItoJ));
-				}
-				if (objectsArray.at(i)->getPosition().y < objectsArray.at(j)->getPosition().y)
-				{
-					objectsArray.at(i)->addedAcceleration(Vector2(0, fGmassJtoI));
-					objectsArray.at(j)->addedAcceleration(Vector2(0, -fGmassItoJ));
-				}
+				Vector2 direction
+				(
+					objectsArray.at(i)->getPosition().x > objectsArray.at(j)->getPosition().x
+					? -1 : 1,
+					objectsArray.at(i)->getPosition().y > objectsArray.at(j)->getPosition().y
+					? -1 : 1
+				);
+
+				objectsArray.at(i)->addedAcceleration(Vector2(fGmassJtoI, fGmassJtoI) * direction);
+				objectsArray.at(j)->addedAcceleration(Vector2(fGmassItoJ, fGmassItoJ) * -direction);
 			}
 		}
 	}

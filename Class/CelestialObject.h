@@ -1,6 +1,3 @@
-#ifndef CELESTIALOBJECT_H
-#define CELESTIALOBJECT_H
-
 #pragma once
 #include "Struct.h"
 
@@ -29,6 +26,3 @@ public:
     int getRadius();
     int getMass();
 };
-
-
-#endif // CELESTIALOBJECT_H
