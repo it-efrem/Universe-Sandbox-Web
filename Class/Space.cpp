@@ -33,7 +33,7 @@ void Space::accelerationObjects()
 
 	for (int i = 0; i < *cP; i++)
 	{
-		for (int j = 0; j < *cP && (i != j); j++)
+		for (int j = i + 1; j < *cP; j++)
 		{
 			float fG = ForceOfGravity(collision, objectsArray[i], objectsArray[j]);
 
