@@ -1,4 +1,6 @@
-import {useCanvas, useDraw, useGravity} from "./hooks";
+import {useGravity} from "./gravity.hooks";
+import {useCanvas} from "./canvas.hook";
+import {useDraw} from "./drow.hook";
 
 function Canvas() {
     const {canvasRef} = useCanvas();
