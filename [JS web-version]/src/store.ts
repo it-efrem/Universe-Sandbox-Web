@@ -1,10 +1,35 @@
+export enum VIEW_MODE {
+    WATCH,
+    ADDITIONAL,
+}
+
 export const store = {
     engine: {
         targetFPS: 60,
-        targetPPS: 1,
+        targetPPS: 1, // Deprecated
 
         lastFPS: 0,
         lastPPS: 0,
+
+        isPause: true,
+        lastSecPerSec: 1,
+        targetSpeedSecPerSec: 1,
+
+        isCollide: true,
+        isFragments: true,
+        // TODO: приливные силы для разрушения объекта
+        isTidalForces: true,
+    },
+    universe: {
+        currentTimeStamp: 0,
+        gravityConst: 6.67,
+    },
+    view: {
+        mode: VIEW_MODE.WATCH as VIEW_MODE,
+
+        isLabels: false,
+        isGrid: true,
+        isForceLines: false,
     },
     canvas: {
         width: 0,
@@ -26,35 +51,33 @@ export const store = {
         scale: 50,
         isMouseDown: false,
 
-        drawForceLines: false,
-
-        drawGrid: true,
         gridCount: 10,
-
-        mode: 'WATCH' // 'WATCH', 'ADDITIONAL'
     },
     nextObjects: [
-        // {
-        //     y: 0,
-        //     x: 0,
-        //     vX: 0,
-        //     vY: 0,
-        //     mass: 1000000
-        // },
-        // {
-        //     y: -0,
-        //     x: -10000,
-        //     vX: 0,
-        //     vY: 25.75,
-        //     mass: 1000
-        // },
-        // {
-        //     y: 0,
-        //     x: -20000,
-        //     vX: 0,
-        //     vY: 18.2,
-        //     mass: 1000
-        // },
+        {
+            y: 0,
+            x: 0,
+            vX: 0,
+            vY: 0,
+            mass: 1000000,
+            isGravity: true,
+        },
+        {
+            y: -0,
+            x: -10000,
+            vX: 0,
+            vY: 25.75,
+            mass: 1000,
+            isGravity: true,
+        },
+        {
+            y: 0,
+            x: -20000,
+            vX: 0,
+            vY: 18.2,
+            mass: 1000,
+            isGravity: true,
+        },
     ] as IGravityObject[],
     lastObjects: [] as IGravityObject[],
     drawObjects: [] as IGravityObject[],
@@ -68,15 +91,18 @@ function random(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-for (let i = 0; i < 2000; i++) {
-    store.nextObjects.push({
-        x: Math.max(Math.random() * 500000, 0),
-        y: Math.max(Math.random() * 500000, 0),
-        mass: Math.max(Math.random() * 10000, 1000),
-        vX: random(-25, 25),
-        vY: random(-25, 25),
-    })
-}
+// for (let i = 0; i < 1000; i++) {
+//     store.nextObjects.push({
+//         x: Math.max(Math.random() * 100000, 0),
+//         y: Math.max(Math.random() * 100000, 0),
+//         mass: Math.max(Math.random() * 1000, 100),
+//         isGravity: true,
+//         vX: -15,
+//         vY: -15,
+//         // vX: random(-25, 25),
+//         // vY: random(-25, 25),
+//     })
+// }
 
 export interface IGravityObject {
     x: number, // km
@@ -84,4 +110,5 @@ export interface IGravityObject {
     vX: number, // km/s
     vY: number, // km/s
     mass: number,  // kg
+    isGravity: boolean,
 }

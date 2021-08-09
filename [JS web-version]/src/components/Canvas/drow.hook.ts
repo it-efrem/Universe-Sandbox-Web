@@ -1,11 +1,7 @@
 import React from "react";
 import {store} from "../../store";
 import {measureFrequency} from "../../utils/measureFrequency";
-import {getDiameter, getPositionOnCanvas} from "../../utils/other";
-
-// todo возможности:
-//  - центрировать на самом тяжелом объекте
-//  - центрировать на самом центре масс
+import {getDiameter} from "../../utils/other";
 
 export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     const measureFPS = measureFrequency((lastFPS: number) => {
@@ -30,7 +26,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
 
                 // todo: refactoring
                 // todo: сетка пропадает, если переместиться в сторону
-                if (store.canvas.drawGrid) {
+                if (store.view.isGrid) {
                     const linesRender = (step: number) => {
                         const xArr = [];
                         const yArr = [];
@@ -108,7 +104,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     const yPos = (object.y - store.canvas.offsetY + (store.canvas.centerY * store.canvas.scale)) / store.canvas.scale;
                     const size = getDiameter(object.mass) / store.canvas.scale;
 
-                    if (store.canvas.drawForceLines) {
+                    if (store.view.isForceLines || !object.isGravity) {
                         const lineToX = xPos + object.vX;
                         const lineToY = yPos + object.vY;
 
@@ -135,76 +131,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
         setTimeout(draw, 1000 / store.engine.targetFPS)
     }
 
-    const mousedown = (e: MouseEvent) => {
-        switch (store.canvas.mode) {
-            case 'WATCH': {
-                store.canvas.isMouseDown = true;
-                store.canvas.clickX = e.x
-                store.canvas.clickY = e.y
-
-                break;
-            }
-            case 'ADDITIONAL': {
-                const [x, y] = getPositionOnCanvas(e, store.canvas);
-
-                store.nextObjects.push({
-                    x,
-                    y,
-                    vX: 0,
-                    vY: 0,
-                    mass: 1000
-                })
-            }
-        }
-    }
-
-    const mouseup = (e: MouseEvent) => {
-        switch (store.canvas.mode) {
-            case 'WATCH': {
-                store.canvas.isMouseDown = false;
-                store.canvas.lastX = store.canvas.offsetX;
-                store.canvas.lastY = store.canvas.offsetY;
-
-                break;
-            }
-        }
-    }
-
-    const mousemove = (e: MouseEvent) => {
-        switch (store.canvas.mode) {
-            case 'WATCH': {
-                if (store.canvas.isMouseDown) {
-                    store.canvas.offsetX = store.canvas.lastX + ((store.canvas.clickX - e.x) * store.canvas.scale);
-                    store.canvas.offsetY = store.canvas.lastY + ((store.canvas.clickY - e.y) * store.canvas.scale);
-
-                    break;
-                }
-            }
-        }
-    }
-
-    const wheel = (e: WheelEvent) => {
-        store.canvas.scale *= e.deltaY > 0 ? 1.1 : 0.9
-
-        if (store.canvas.scale < 1) {
-            store.canvas.scale = 1
-        }
-    }
-
     React.useEffect(() => {
         draw()
-
-        // todo: Унести отсюда?
-        canvasRef.current?.addEventListener('mousedown', mousedown)
-        canvasRef.current?.addEventListener('mouseup', mouseup)
-        canvasRef.current?.addEventListener('mousemove', mousemove)
-        canvasRef.current?.addEventListener('wheel', wheel)
-
-        return () => {
-            canvasRef.current?.removeEventListener('mousedown', mousedown)
-            canvasRef.current?.removeEventListener('mouseup', mouseup)
-            canvasRef.current?.removeEventListener('mousemove', mousemove)
-            canvasRef.current?.removeEventListener('wheel', wheel)
-        }
     }, [canvasRef])
 }

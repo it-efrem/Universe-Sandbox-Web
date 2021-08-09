@@ -3,16 +3,12 @@ import {store} from "../../store";
 import {measureFrequency} from "../../utils/measureFrequency";
 import {getDiameter} from "../../utils/other";
 
-// Todo: Понять почему орбитальная скорость не снижается при увеличении расстояния
-// TODO: Учитывать приливные силы для разрушения объекта
-export const gravity_const = 6.67;
-
 const moveByVector = (totalDistance: number, a_pos: number, b_pos: number, a_mass: number, b_mass: number) => {
     const sign = Math.sign(a_pos - b_pos);
     const distance = Math.max(a_pos, b_pos) - Math.min(a_pos, b_pos);
     const distanceRelation = Math.abs(totalDistance / distance);
 
-    const gravityForce = gravity_const * ((a_mass * b_mass) / Math.pow(totalDistance, 2)) / distanceRelation;
+    const gravityForce = store.universe.gravityConst * ((a_mass * b_mass) / Math.pow(totalDistance, 2)) / distanceRelation;
 
     const a_vector = gravityForce / a_mass * -sign;
     const b_vector = gravityForce / b_mass * sign;
@@ -43,7 +39,8 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                 const objectA = store.nextObjects[a];
                 const objectB = store.nextObjects[b];
 
-                if (objectA.mass && objectB.mass) {
+                //todo: refactoring
+                if (objectA.isGravity && objectB.isGravity && objectA.mass && objectB.mass) {
                     const x_pos = Math.abs(objectA.x - objectB.x);
                     const y_pos = Math.abs(objectA.y - objectB.y);
 
@@ -68,7 +65,7 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     objectB.vX += b_x_vector
                     objectB.vY += b_y_vector
 
-                    const isCollision = detectCollision(totalDistance, getDiameter(objectA.mass), getDiameter(objectB.mass))
+                    const isCollision = store.engine.isCollide && detectCollision(totalDistance, getDiameter(objectA.mass), getDiameter(objectB.mass))
 
                     if (isCollision) {
                         const totalMass = objectA.mass + objectB.mass;
@@ -79,6 +76,7 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                         objectA.vX = xForce;
                         objectA.vY = yForce;
 
+                        // todo: починить мерж, сейчас при меже большой объект может резко скокнуть на место легкого
                         // todo: пофиксить костыль с массой
                         objectB.mass = 0;
                     }
@@ -90,8 +88,11 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
         store.nextObjects = store.nextObjects
             .filter((obj) => obj.mass > 0)
             .map(object => {
-                object.x = object.x + object.vX;
-                object.y = object.y + object.vY;
+
+                if (object.isGravity) {
+                    object.x = object.x + object.vX;
+                    object.y = object.y + object.vY;
+                }
 
                 return object
             })

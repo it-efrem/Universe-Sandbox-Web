@@ -1,17 +1,21 @@
 import React from "react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
-import InfoPanel from "../InfoPanel/InfoPanel";
+import Menu from "../Menu/Menu";
 import Canvas from '../Canvas/Canvas';
 
 import './App.css';
 
 // TODO: Рисовать гравитационную искривляющуюся сетку
 // TODO: Возможность ускорения и замедления
+// todo возможности:
+//  - центрировать на самом тяжелом объекте
+//  - центрировать на самом центре масс
 
 function App() {
     return (
         <div className="App">
-            <InfoPanel/>
+            <Menu/>
             <Canvas/>
         </div>
     );

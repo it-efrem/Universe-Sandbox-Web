@@ -1,0 +1,31 @@
+.Menu_container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    width: 100%;
+    background: #242424;
+    color: #929292;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+}
+
+.Menu_text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Menu_container_part {
+    display: flex;
+}
+
+.Menu_container_item {
+    display: flex;
+}
+
+.Menu_container_item > div + div {
+    margin-left: 1em;
+}
