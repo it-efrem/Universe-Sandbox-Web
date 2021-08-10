@@ -18,12 +18,31 @@
     align-items: center;
 }
 
+.Menu_input {
+    max-width: 60px;
+    padding: 3px 6px;
+    margin: 0;
+    height: 1em;
+    background: #242424;
+    border: 1px solid #242424;
+    color: #929292;
+}
+
+.Menu_input:focus, .Menu_input:hover, .Menu_input:active {
+    border: 1px solid #929292;
+    background: #3d3d3d;
+}
+
 .Menu_container_part {
     display: flex;
 }
 
 .Menu_container_item {
     display: flex;
+}
+
+.Menu_container_item + .Menu_container_item {
+    margin-left: 1em;
 }
 
 .Menu_container_item > div + div {

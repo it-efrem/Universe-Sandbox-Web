@@ -3,33 +3,34 @@ export enum VIEW_MODE {
     ADDITIONAL,
 }
 
-export const store = {
-    engine: {
+export const engineStore = {
+    stats: {
         targetFPS: 60,
         targetPPS: 1, // Deprecated
 
+        // todo:
+        // lastTimeSpeed: 100,
         lastFPS: 0,
         lastPPS: 0,
-
-        isPause: true,
-        lastSecPerSec: 1,
-        targetSpeedSecPerSec: 1,
-
-        isCollide: true,
-        isFragments: true,
-        // TODO: приливные силы для разрушения объекта
-        isTidalForces: true,
     },
     universe: {
         currentTimeStamp: 0,
         gravityConst: 6.67,
     },
-    view: {
-        mode: VIEW_MODE.WATCH as VIEW_MODE,
+    settings: {
+        viewMode: VIEW_MODE.WATCH as VIEW_MODE,
 
-        isLabels: false,
+        // todo: учитывать фактическое максимальное время
+        targetTimeSpeed: 100,
+        isPause: false,
+
+        isLabels: true,
         isGrid: true,
-        isForceLines: false,
+        isForceLines: true,
+
+        isCollide: true,
+        isFragments: true,
+        isTidalForces: true,
     },
     canvas: {
         width: 0,
@@ -48,44 +49,32 @@ export const store = {
         lastY: 0,
         clickX: 0,
         clickY: 0,
-        scale: 50,
+        scale: 1000,
         isMouseDown: false,
 
         gridCount: 10,
         vectorsScale: 100,
     },
-    nextObjects: [
-        {
+    nextObjects: {
+        'Earth': {
             y: 0,
             x: 0,
             vX: 0,
             vY: 0,
-            mass: 1000000,
+            mass: 6600, // 10(18)
             isGravity: true,
         },
-        {
+        'Moon': {
             y: -0,
-            x: -10000,
+            x: -350000,
             vX: 0,
-            vY: 25.75,
-            mass: 1000,
+            vY: 1.16,
+            mass: 81.2,
             isGravity: true,
         },
-        {
-            y: 0,
-            x: -20000,
-            vX: 0,
-            vY: 18.2,
-            mass: 1000,
-            isGravity: true,
-        },
-    ] as IGravityObject[],
-    lastObjects: [] as IGravityObject[],
-    drawObjects: [] as IGravityObject[],
-}
-
-export const orbitSpeed = () => {
-
+    } as ObjectsType,
+    lastObjects: {} as ObjectsType,
+    drawObjects: {} as ObjectsType,
 }
 
 function random(min: number, max: number) {
@@ -104,6 +93,8 @@ function random(min: number, max: number) {
 //         // vY: random(-25, 25),
 //     })
 // }
+
+export type ObjectsType = Record<string, IGravityObject>;
 
 export interface IGravityObject {
     x: number, // km

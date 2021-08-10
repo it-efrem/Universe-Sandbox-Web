@@ -2,19 +2,19 @@ import {useGravity} from "./gravity.hooks";
 import {useCanvas} from "./canvas.hook";
 import {useDraw} from "./drow.hook";
 import {useEngine} from "./engine.hook";
-import "./Canvas.css";
-import {useContext} from "../../reducer/reducer.hooks";
+import {useReactStore} from "../../reducer/reducer.hooks";
 import {selectCursorType} from "../../reducer/selectors";
+import "./Canvas.css";
 
-function Canvas() {
+function Engine() {
     const {canvasRef} = useCanvas();
-    const {state} = useContext();
+    const {state} = useReactStore();
 
+    useEngine(canvasRef);
     useGravity(canvasRef);
     useDraw(canvasRef);
-    useEngine(canvasRef);
 
-    const cursorType = selectCursorType(state.mode);
+    const cursorType = selectCursorType(state.menu.mode);
 
     const canvasClassName = `Canvas_cursor__${cursorType}`;
 
@@ -25,4 +25,4 @@ function Canvas() {
     );
 }
 
-export default Canvas;
+export default Engine;

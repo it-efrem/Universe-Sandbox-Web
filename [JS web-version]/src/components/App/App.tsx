@@ -2,11 +2,11 @@ import React from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import Menu from "../Menu/Menu";
-import Canvas from '../Canvas/Canvas';
+import Engine from '../Engine/Engine';
 
 import {LabelGitHub} from "../LabelGitHub/LabelGitHub";
 import {initReducer} from "../../reducer/reducer.hooks";
-import {ReactContext} from "../../reducer/context";
+import {ReactStoreContext} from "../../reducer/context";
 
 import './App.css';
 
@@ -20,13 +20,13 @@ function App() {
     const reducer = initReducer();
 
     return (
-        <ReactContext.Provider value={reducer}>
+        <ReactStoreContext.Provider value={reducer}>
             <div className="App">
                 <LabelGitHub/>
                 <Menu/>
-                <Canvas/>
+                <Engine/>
             </div>
-        </ReactContext.Provider>
+        </ReactStoreContext.Provider>
     );
 }
 

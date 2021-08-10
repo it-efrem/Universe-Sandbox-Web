@@ -1,14 +1,14 @@
 import React from "react";
 import {IAction} from "./actions";
-import {initialState} from "./initialState";
+import {initialReactStore} from "./initialReactStore";
 
 interface IReactContext {
     dispatch: React.Dispatch<IAction>;
-    state: typeof initialState;
+    state: typeof initialReactStore;
 }
 
-export const ReactContext = React.createContext<IReactContext>({
-    state: initialState,
+export const ReactStoreContext = React.createContext<IReactContext>({
+    state: initialReactStore,
     dispatch: (action: IAction) => {
     }
 })

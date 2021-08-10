@@ -1,11 +1,11 @@
 import React from "react";
-import {store} from "../../store";
+import {engineStore} from "../../engineStore";
 import {measureFrequency} from "../../utils/measureFrequency";
 import {getDiameter} from "../../utils/other";
 
 export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     const measureFPS = measureFrequency((lastFPS: number) => {
-        store.engine.lastFPS = lastFPS
+        engineStore.stats.lastFPS = lastFPS
     })
 
     const draw = () => {
@@ -15,36 +15,36 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
             const ctx = canvasRef?.current?.getContext("2d");
 
             if (ctx) {
-                const lastFPS = store.engine.lastFPS || store.engine.targetFPS;
+                const lastFPS = engineStore.stats.lastFPS || engineStore.stats.targetFPS;
                 // todo: завязка на послений fps подлагивает, с константой работало норм, понять причину
-                const physicsToDrawTimeRelation = store.engine.targetPPS / lastFPS;
+                const physicsToDrawTimeRelation = engineStore.stats.targetPPS / lastFPS;
 
-                ctx.clearRect(0, 0, store.canvas.width, store.canvas.height);
+                ctx.clearRect(0, 0, engineStore.canvas.width, engineStore.canvas.height);
 
-                store.canvas.coordinates.zeroX = (-store.canvas.offsetX + (store.canvas.centerX * store.canvas.scale)) / store.canvas.scale;
-                store.canvas.coordinates.zeroY = (-store.canvas.offsetY + (store.canvas.centerY * store.canvas.scale)) / store.canvas.scale;
+                engineStore.canvas.coordinates.zeroX = (-engineStore.canvas.offsetX + (engineStore.canvas.centerX * engineStore.canvas.scale)) / engineStore.canvas.scale;
+                engineStore.canvas.coordinates.zeroY = (-engineStore.canvas.offsetY + (engineStore.canvas.centerY * engineStore.canvas.scale)) / engineStore.canvas.scale;
 
                 // todo: refactoring
                 // todo: сетка пропадает, если переместиться в сторону
-                if (store.view.isGrid) {
+                if (engineStore.settings.isGrid) {
                     const linesRender = (step: number) => {
                         const xArr = [];
                         const yArr = [];
 
-                        const scaleOrder = Math.trunc(store.canvas.scale).toString().length;
+                        const scaleOrder = Math.trunc(engineStore.canvas.scale).toString().length;
                         const minDistance = Math.pow(10, scaleOrder) * step;
-                        const count = Math.pow(store.canvas.gridCount, 2);
-                        const opacity = minDistance / store.canvas.scale / 10
+                        const count = Math.pow(engineStore.canvas.gridCount, 2);
+                        const opacity = minDistance / engineStore.canvas.scale / 10
 
                         for (let i = count / -2; i <= count / 2; i++) {
                             yArr.push(
-                                store.canvas.coordinates.zeroX - (minDistance * i) * 10 / store.canvas.scale,
+                                engineStore.canvas.coordinates.zeroX - (minDistance * i) * 10 / engineStore.canvas.scale,
                             )
                         }
 
                         for (let i = count / -2; i <= count / 2; i++) {
                             xArr.push(
-                                store.canvas.coordinates.zeroY - (minDistance * i) * 10 / store.canvas.scale,
+                                engineStore.canvas.coordinates.zeroY - (minDistance * i) * 10 / engineStore.canvas.scale,
                             )
                         }
 
@@ -53,7 +53,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
 
                         yArr.forEach(x => {
                             const yStart = 0;
-                            const yEnd = store.canvas.height;
+                            const yEnd = engineStore.canvas.height;
 
                             const line = new Path2D();
                             line.moveTo(x, yStart);
@@ -64,7 +64,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
 
                         xArr.forEach(y => {
                             const xStart = 0;
-                            const xEnd = store.canvas.width;
+                            const xEnd = engineStore.canvas.width;
 
                             const line = new Path2D();
                             line.moveTo(xStart, y);
@@ -79,10 +79,12 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     linesRender(10);
                 }
 
-                for (let noIdx = 0; noIdx < store.nextObjects.length; noIdx++) {
-                    const nextObject = store.nextObjects[noIdx];
-                    const lastObject = store.lastObjects[noIdx];
-                    const drawObject = store.drawObjects[noIdx] || lastObject;
+                const nextObjectsKeys = Object.keys(engineStore.nextObjects);
+
+                nextObjectsKeys.forEach((objectName) => {
+                    const nextObject = engineStore.nextObjects[objectName];
+                    const lastObject = engineStore.lastObjects[objectName];
+                    const drawObject = engineStore.drawObjects[objectName] || lastObject;
 
                     if (nextObject && lastObject) {
                         const diffX = (nextObject.x - lastObject.x) / physicsToDrawTimeRelation;
@@ -90,33 +92,39 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                         const newX = drawObject.x + diffX;
                         const newY = drawObject.y + diffY;
 
-                        store.drawObjects[noIdx] = {
+                        engineStore.drawObjects[objectName] = {
                             ...drawObject,
                             x: newX,
                             y: newY
                         }
                     }
-                }
+                })
 
-                store.drawObjects.forEach((object) => {
-                    // todo: клопипаста
-                    const xPos = (object.x - store.canvas.offsetX + (store.canvas.centerX * store.canvas.scale)) / store.canvas.scale;
-                    const yPos = (object.y - store.canvas.offsetY + (store.canvas.centerY * store.canvas.scale)) / store.canvas.scale;
-                    const size = getDiameter(object.mass) / store.canvas.scale;
+                Object.entries(engineStore.drawObjects).forEach(([name, object]) => {
+                    // todo: копипаста
+                    const xPos = (object.x - engineStore.canvas.offsetX + (engineStore.canvas.centerX * engineStore.canvas.scale)) / engineStore.canvas.scale;
+                    const yPos = (object.y - engineStore.canvas.offsetY + (engineStore.canvas.centerY * engineStore.canvas.scale)) / engineStore.canvas.scale;
+                    const size = getDiameter(object.mass) / engineStore.canvas.scale;
 
-                    if (store.view.isForceLines || !object.isGravity) {
-
-                        const lineToX = (xPos + object.vX * store.canvas.vectorsScale / store.canvas.scale)
-                        const lineToY = (yPos + object.vY * store.canvas.vectorsScale / store.canvas.scale)
-
-                        ctx.strokeStyle = "#ff0000";
+                    if (engineStore.settings.isForceLines || !object.isGravity) {
                         ctx.save();
+                        ctx.strokeStyle = "#ff0000";
+
+                        const lineToX = (xPos + object.vX * engineStore.canvas.vectorsScale / engineStore.canvas.scale)
+                        const lineToY = (yPos + object.vY * engineStore.canvas.vectorsScale / engineStore.canvas.scale)
 
                         const line = new Path2D();
                         line.moveTo(xPos, yPos);
                         line.lineTo(lineToX, lineToY);
                         ctx.stroke(line)
                         ctx.restore();
+                    }
+
+                    if (engineStore.settings.isLabels) {
+                        ctx.save();
+                        ctx.font = "12px arial";
+                        ctx.fillText(name, xPos + size / 1.3, yPos - size / 1.3);
+                        ctx.restore()
                     }
 
                     ctx.save();
@@ -130,7 +138,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
             }
         }
 
-        setTimeout(draw, 1000 / store.engine.targetFPS)
+        setTimeout(draw, 1000 / engineStore.stats.targetFPS)
     }
 
     React.useEffect(() => {

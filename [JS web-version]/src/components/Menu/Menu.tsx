@@ -1,22 +1,15 @@
 import React from "react";
-import "./Menu.css";
-import {store} from "../../store";
+import moment from "moment";
+
+import {engineStore, VIEW_MODE} from "../../engineStore";
 import {useMenu} from "./Menu.hooks";
 import {Button} from "../Button/Button";
+import {useReactStore} from "../../reducer/reducer.hooks";
+
+import "./Menu.css";
 
 function Menu() {
     const {
-        lastFPS,
-        lastPPS,
-        objectsCount,
-        isWatch,
-        isAdditional,
-        isGrid,
-        isLabels,
-        isForceLines,
-        isTidalForces,
-        isFragments,
-        isCollide,
         handleClickWatchMode,
         handleClickAdditionalMode,
         handleClickIsGrid,
@@ -24,24 +17,76 @@ function Menu() {
         handleClickIsForces,
         handleClickIsTridals,
         handleClickIsFragments,
-        handleClickIsCollide
+        handleClickIsCollide,
+        handleInputTargetTimeSpeed
     } = useMenu();
+    const {
+        state: {
+            stats: {
+                lastFPS,
+                lastPPS,
+                objectsCount,
+            },
+            menu: {
+                mode,
+                isGrid,
+                isLabels,
+                isForceLines,
+                isTidalForces,
+                isFragments,
+                isCollide,
+            }
+        }
+    } = useReactStore();
+
+    const isWatch = mode === VIEW_MODE.WATCH;
+    const isAdditional = mode === VIEW_MODE.ADDITIONAL;
+    const currentTimeStr = moment.unix(engineStore.universe.currentTimeStamp).format("YYYY-MM-DD HH:mm:ss")
+    const currentTimeSpeedStr = React.useMemo(() => {
+        const duration = moment.duration(engineStore.settings.targetTimeSpeed * 1000);
+
+        const ss = duration.asSeconds();
+        const mm = duration.asMinutes();
+        const HH = duration.asHours();
+
+        const DD = duration.asDays();
+        const MM = duration.asMonths();
+        const YY = duration.asYears();
+
+        const timeMap = [
+            [YY, 'years'],
+            [MM, 'months'],
+            [DD, 'days'],
+            [HH, 'hours'],
+            [mm, 'min'],
+            [ss, 'sec'],
+        ]
+
+        const maxMeasure = timeMap.filter(([value]) => value >= 1)[0] as [number, string];
+
+        return `${maxMeasure[0].toFixed(2)} ${maxMeasure[1]}`;
+    }, [engineStore.settings.targetTimeSpeed]);
 
     return (
         <div className="Menu_container">
             <div className="Menu_container_part">
                 <div className="Menu_container_item">
                     {
-                        store.engine.isPause ?
-                            <Button isActive={store.engine.isPause} icon={<i className="fas fa-play"/>}/> :
-                            <Button isActive={store.engine.isPause} icon={<i className="fas fa-pause"/>}/>
+                        engineStore.settings.isPause ?
+                            <Button isActive={engineStore.settings.isPause} icon={<i className="fas fa-play"/>}/> :
+                            <Button isActive={engineStore.settings.isPause} icon={<i className="fas fa-pause"/>}/>
                     }
-                    <div className="Menu_text">{store.universe.currentTimeStamp} s</div>
+                    <div className="Menu_text">{currentTimeStr}</div>
                 </div>
 
                 <div className="Menu_container_item">
-                    <div className="Menu_text">{store.engine.lastSecPerSec} sec/sec</div>
-                    <div className="Menu_text">{store.engine.targetSpeedSecPerSec}</div>
+                    <div className="Menu_text">{currentTimeSpeedStr}/sec</div>
+                    <div className="Menu_text">
+                        <input type="text"
+                               className="Menu_input"
+                               value={engineStore.settings.targetTimeSpeed}
+                               onChange={(e) => handleInputTargetTimeSpeed(e.target.value)}/>
+                    </div>
                     <Button icon={<i className="fas fa-fast-backward"/>}/>
                     <Button icon={<i className="fas fa-fast-forward"/>}/>
                 </div>
