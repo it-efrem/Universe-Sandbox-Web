@@ -1,0 +1,29 @@
+.LabelGitHub {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+
+    position: absolute;
+    top: 2px;
+    left: 2px;
+
+    color: white;
+    background: rgba(36, 36, 36, 0.2);
+    padding: 2px 4px;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.LabelGitHub:hover {
+    color: white;
+    background: rgba(36, 36, 36, 0.4);
+}
+
+.LabelGitHub_icon {
+    margin-right: 4px;
+}
+
+.LabelGitHub_icon svg {
+    fill: currentColor;
+}

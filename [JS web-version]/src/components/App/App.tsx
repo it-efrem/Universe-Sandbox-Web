@@ -5,6 +5,7 @@ import Menu from "../Menu/Menu";
 import Canvas from '../Canvas/Canvas';
 
 import './App.css';
+import {LabelGitHub} from "../LabelGitHub/LabelGitHub";
 
 // TODO: Рисовать гравитационную искривляющуюся сетку
 // TODO: Возможность ускорения и замедления
@@ -15,6 +16,7 @@ import './App.css';
 function App() {
     return (
         <div className="App">
+            <LabelGitHub/>
             <Menu/>
             <Canvas/>
         </div>
