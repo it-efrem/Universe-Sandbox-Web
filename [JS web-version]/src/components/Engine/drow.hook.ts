@@ -1,7 +1,7 @@
 import React from "react";
-import {engineStore} from "../../engineStore";
+import {engineStore} from "../../engine/store";
 import {measureFrequency} from "../../utils/measureFrequency";
-import {getDiameter} from "../../utils/other";
+import {getRadius} from "../../utils/other";
 
 export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     const measureFPS = measureFrequency((lastFPS: number) => {
@@ -104,7 +104,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     // todo: копипаста
                     const xPos = (object.x - engineStore.canvas.offsetX + (engineStore.canvas.centerX * engineStore.canvas.scale)) / engineStore.canvas.scale;
                     const yPos = (object.y - engineStore.canvas.offsetY + (engineStore.canvas.centerY * engineStore.canvas.scale)) / engineStore.canvas.scale;
-                    const size = getDiameter(object.mass) / engineStore.canvas.scale;
+                    const objectRadius = getRadius(object.mass) / engineStore.canvas.scale;
 
                     if (engineStore.settings.isForceLines || !object.isGravity) {
                         ctx.save();
@@ -123,7 +123,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     if (engineStore.settings.isLabels) {
                         ctx.save();
                         ctx.font = "12px arial";
-                        ctx.fillText(name, xPos + size / 1.3, yPos - size / 1.3);
+                        ctx.fillText(name, xPos + objectRadius / 1.3, yPos - objectRadius / 1.3);
                         ctx.restore()
                     }
 
@@ -131,7 +131,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     ctx.fillStyle = "rgba(0,0,0,0.5)";
                     const circle = new Path2D();
 
-                    circle.arc(xPos, yPos, size, 0, Math.PI * 2, true);
+                    circle.arc(xPos, yPos, objectRadius, 0, Math.PI * 2, true);
                     ctx.fill(circle);
                     ctx.restore()
                 })

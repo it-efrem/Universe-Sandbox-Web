@@ -1,0 +1,54 @@
+.ObjectMenu_wrapper {
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    width: 175px;
+    opacity: 0.9;
+    transform: translateY(-50%);
+}
+
+.ObjectMenu_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    background: #242424;
+    color: #929292;
+}
+
+.ObjectMenu_container:last-child {
+    padding-bottom: 5px;
+}
+
+.ObjectMenu_top {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 18px;
+    margin-bottom: 5px;
+    background: #3d3d3d;
+    font-size: 16px;
+}
+
+.ObjectMenu_close:hover {
+    cursor: pointer;
+    color: #b7b7b7;
+}
+
+.ObjectMenu_row {
+    display: flex;
+    justify-content: flex-start;
+    padding: 5px 18px;
+}
+
+.ObjectMenu_label {
+    min-width: 24px;
+    font-size: 12px;
+}
+
+.ObjectMenu_label i {
+    min-width: 24px;
+}
+
+.ObjectMenu_value {
+    font-size: 12px;
+}

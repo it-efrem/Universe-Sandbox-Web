@@ -1,7 +1,8 @@
 import React from "react";
-import {engineStore} from "../../engineStore";
+import {engineStore} from "../../engine/store";
 import {measureFrequency} from "../../utils/measureFrequency";
-import {getDiameter} from "../../utils/other";
+import {detectCanvasCollision, detectUniverseCollision, getRadius, getVectorLength} from "../../utils/other";
+import {triggerListeners} from "../../engine/listener";
 
 const gravityWithTimeSpeed = () => {
     const lastPPS = Math.max(engineStore.stats.lastPPS, 1);
@@ -25,10 +26,6 @@ const moveByVector = (totalDistance: number, a_pos: number, b_pos: number, a_mas
         a_vector,
         b_vector,
     ]
-}
-
-const detectCollision = (totalDistance: number, a_radius: number, b_radius: number) => {
-    return totalDistance < a_radius || totalDistance < b_radius
 }
 
 export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
@@ -60,10 +57,7 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                         const x_pos = Math.abs(objectA.x - objectB.x);
                         const y_pos = Math.abs(objectA.y - objectB.y);
 
-                        const totalDistance = Math.sqrt(
-                            Math.pow(x_pos, 2) +
-                            Math.pow(y_pos, 2)
-                        )
+                        const totalDistance = getVectorLength(x_pos, y_pos);
 
                         const [
                             a_x_vector,
@@ -81,7 +75,7 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                         objectB.vX += b_x_vector
                         objectB.vY += b_y_vector
 
-                        const isCollision = engineStore.settings.isCollide && detectCollision(totalDistance, getDiameter(objectA.mass), getDiameter(objectB.mass))
+                        const isCollision = engineStore.settings.isCollide && detectUniverseCollision(totalDistance, getRadius(objectA.mass), getRadius(objectB.mass))
 
                         if (isCollision) {
                             const totalMass = objectA.mass + objectB.mass;
@@ -101,10 +95,21 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
             }
 
             // todo: optimize
+            // todo: удалять все объекты, которые не должны симулироваться и если ЛКМ поднята
             engineStore.nextObjects = Object.fromEntries(
                 nextObjectsArr
-                    .filter(([name, object]) => object.mass > 0)
-                    .map(([name, object]) => {
+                    .filter(([id, object]) => object.mass > 0)
+                    .map(([id, object]) => {
+
+                        // detect active object
+                        if (engineStore.canvas.isMouseDown) {
+                            const universe_x = (engineStore.canvas.clickX - engineStore.canvas.centerX) * engineStore.canvas.scale + engineStore.canvas.offsetX;
+                            const universe_y = (engineStore.canvas.clickY - engineStore.canvas.centerY) * engineStore.canvas.scale + engineStore.canvas.offsetY;
+
+                            if (detectCanvasCollision(universe_x, universe_y, 1, object.x, object.y, getRadius(object.mass))) {
+                                engineStore.activeObjectId = id;
+                            }
+                        }
 
                         if (object.isGravity) {
                             const lastPPS = Math.max(engineStore.stats.lastPPS, 1);
@@ -113,11 +118,12 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                             object.y = object.y + object.vY * engineStore.settings.targetTimeSpeed / lastPPS;
                         }
 
-                        return [name, object]
+                        return [id, object]
                     })
             )
         }
 
+        triggerListeners()
         requestAnimationFrame(gravity);
     }
 

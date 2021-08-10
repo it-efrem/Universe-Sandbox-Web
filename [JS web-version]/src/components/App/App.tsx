@@ -5,10 +5,11 @@ import Menu from "../Menu/Menu";
 import Engine from '../Engine/Engine';
 
 import {LabelGitHub} from "../LabelGitHub/LabelGitHub";
-import {initReducer} from "../../reducer/reducer.hooks";
+import {initReducer} from "../../reducer/hooks";
 import {ReactStoreContext} from "../../reducer/context";
 
 import './App.css';
+import {ObjectMenu} from "../ObjectMenu/ObjectMenu";
 
 // TODO: Рисовать гравитационную искривляющуюся сетку
 // TODO: Возможность ускорения и замедления
@@ -22,9 +23,12 @@ function App() {
     return (
         <ReactStoreContext.Provider value={reducer}>
             <div className="App">
-                <LabelGitHub/>
-                <Menu/>
                 <Engine/>
+
+                <ObjectMenu/>
+                <Menu/>
+
+                <LabelGitHub/>
             </div>
         </ReactStoreContext.Provider>
     );

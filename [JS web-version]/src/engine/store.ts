@@ -55,6 +55,7 @@ export const engineStore = {
         gridCount: 10,
         vectorsScale: 100,
     },
+    activeObjectId: undefined as string | undefined,
     nextObjects: {
         'Earth': {
             y: 0,
@@ -66,9 +67,9 @@ export const engineStore = {
         },
         'Moon': {
             y: -0,
-            x: -350000,
+            x: -406000,
             vX: 0,
-            vY: 1.16,
+            vY: 1.02,
             mass: 81.2,
             isGravity: true,
         },
@@ -76,6 +77,8 @@ export const engineStore = {
     lastObjects: {} as ObjectsType,
     drawObjects: {} as ObjectsType,
 }
+
+export type EngineStoreType = typeof engineStore;
 
 function random(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min)
@@ -102,5 +105,5 @@ export interface IGravityObject {
     vX: number, // km/s
     vY: number, // km/s
     mass: number,  // kg
-    isGravity: boolean,
+    isGravity: boolean, // todo: is simulated
 }

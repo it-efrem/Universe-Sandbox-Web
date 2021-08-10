@@ -1,5 +1,5 @@
 import React from "react";
-import {engineStore, VIEW_MODE} from "../../engineStore";
+import {engineStore, VIEW_MODE} from "../../engine/store";
 import {getPositionOnCanvasByZero, getPositionOnUniverse, getRandomName} from "../../utils/other";
 
 export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {

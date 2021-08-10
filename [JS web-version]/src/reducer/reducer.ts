@@ -1,5 +1,5 @@
 import {IAction, TYPE_ACTION} from "./actions";
-import {engineStore} from "../engineStore";
+import {engineStore} from "../engine/store";
 
 export const reducer = (reactStore: any, action: IAction) => {
     switch (action.type) {

@@ -1,13 +1,15 @@
 import React from "react";
 import moment from "moment";
 
-import {engineStore, VIEW_MODE} from "../../engineStore";
+import {engineStore, VIEW_MODE} from "../../engine/store";
 import {useMenu} from "./Menu.hooks";
 import {Button} from "../Button/Button";
-import {useReactStore} from "../../reducer/reducer.hooks";
+import {useReactStore} from "../../reducer/hooks";
 
 import "./Menu.css";
+import {normalizeNumber} from "../../utils/other";
 
+// todo: re-renders
 function Menu() {
     const {
         handleClickWatchMode,
@@ -64,7 +66,7 @@ function Menu() {
 
         const maxMeasure = timeMap.filter(([value]) => value >= 1)[0] as [number, string];
 
-        return `${maxMeasure[0].toFixed(2)} ${maxMeasure[1]}`;
+        return `${normalizeNumber(maxMeasure[0])} ${maxMeasure[1]}`;
     }, [engineStore.settings.targetTimeSpeed]);
 
     return (

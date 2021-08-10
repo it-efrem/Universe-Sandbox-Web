@@ -1,6 +1,6 @@
 import React from "react";
-import {engineStore, VIEW_MODE} from "../../engineStore";
-import {useReactStore} from "../../reducer/reducer.hooks";
+import {engineStore, VIEW_MODE} from "../../engine/store";
+import {useReactStore} from "../../reducer/hooks";
 import {
     collideChangeAction,
     forceLinesChangeAction,

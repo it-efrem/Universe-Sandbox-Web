@@ -1,4 +1,4 @@
-import {engineStore, VIEW_MODE} from "../engineStore";
+import {engineStore, VIEW_MODE} from "../engine/store";
 
 export const initialReactStore = {
     stats: {

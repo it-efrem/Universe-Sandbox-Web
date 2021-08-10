@@ -1,4 +1,4 @@
-import {VIEW_MODE} from "../engineStore";
+import {VIEW_MODE} from "../engine/store";
 
 export const selectCursorType = (mode: VIEW_MODE) => {
     switch (mode) {

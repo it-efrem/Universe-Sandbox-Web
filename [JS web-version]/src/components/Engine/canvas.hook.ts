@@ -1,5 +1,5 @@
 import React from "react";
-import {engineStore} from "../../engineStore";
+import {engineStore} from "../../engine/store";
 
 export const useCanvas = () => {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
