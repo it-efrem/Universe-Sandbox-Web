@@ -1,0 +1,11 @@
+.Canvas_cursor__default {
+    cursor: default;
+}
+
+.Canvas_cursor__pointer {
+    cursor: pointer;
+}
+
+.Canvas_cursor__add {
+    cursor: copy;
+}

@@ -105,8 +105,9 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     const size = getDiameter(object.mass) / store.canvas.scale;
 
                     if (store.view.isForceLines || !object.isGravity) {
-                        const lineToX = xPos + object.vX;
-                        const lineToY = yPos + object.vY;
+
+                        const lineToX = (xPos + object.vX * store.canvas.vectorsScale / store.canvas.scale)
+                        const lineToY = (yPos + object.vY * store.canvas.vectorsScale / store.canvas.scale)
 
                         ctx.strokeStyle = "#ff0000";
                         ctx.save();
@@ -119,6 +120,7 @@ export const useDraw = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     }
 
                     ctx.save();
+                    ctx.fillStyle = "rgba(0,0,0,0.5)";
                     const circle = new Path2D();
 
                     circle.arc(xPos, yPos, size, 0, Math.PI * 2, true);

@@ -1,5 +1,5 @@
 import React from "react";
-import {IGravityObject, store, VIEW_MODE} from "../../store";
+import {store, VIEW_MODE} from "../../store";
 import {getPositionOnCanvasByZero, getPositionOnUniverse} from "../../utils/other";
 
 export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
@@ -7,15 +7,15 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     const additionalObjIdRef = React.useRef<number | undefined>(undefined);
 
     const mousedown = (e: MouseEvent) => {
-        store.canvas.clickX = e.x
-        store.canvas.clickY = e.y
+        e.preventDefault();
+
+        if (e.which === 1) {
+            store.canvas.isMouseDown = true;
+            store.canvas.clickX = e.x
+            store.canvas.clickY = e.y
+        }
 
         switch (store.view.mode) {
-            case VIEW_MODE.WATCH: {
-                store.canvas.isMouseDown = true;
-
-                break;
-            }
             case VIEW_MODE.ADDITIONAL: {
                 const [x, y] = getPositionOnUniverse(e, store.canvas);
 
@@ -35,15 +35,15 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     }
 
     const mouseup = (e: MouseEvent) => {
-        store.canvas.lastX = store.canvas.offsetX;
-        store.canvas.lastY = store.canvas.offsetY;
+        e.preventDefault();
+
+        if (e.which === 1) {
+            store.canvas.isMouseDown = false;
+            store.canvas.lastX = store.canvas.offsetX;
+            store.canvas.lastY = store.canvas.offsetY;
+        }
 
         switch (store.view.mode) {
-            case VIEW_MODE.WATCH: {
-                store.canvas.isMouseDown = false;
-
-                break;
-            }
             case VIEW_MODE.ADDITIONAL: {
                 if (additionalObjIdRef.current !== undefined) {
                     const nextObject = store.nextObjects[additionalObjIdRef.current];
@@ -59,9 +59,11 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     }
 
     const mousemove = (e: MouseEvent) => {
+        e.preventDefault();
+
         switch (store.view.mode) {
             case VIEW_MODE.WATCH: {
-                if (store.canvas.isMouseDown) {
+                if (e.which === 1 && store.canvas.isMouseDown) {
                     store.canvas.offsetX = store.canvas.lastX + ((store.canvas.clickX - e.x) * store.canvas.scale);
                     store.canvas.offsetY = store.canvas.lastY + ((store.canvas.clickY - e.y) * store.canvas.scale);
                 }
@@ -76,10 +78,8 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
                     if (nextObject) {
                         const [vX, vY] = getPositionOnCanvasByZero(e, store.canvas);
 
-                        console.log(vX, '|', vY)
-
-                        nextObject.vX = vX
-                        nextObject.vY = vY;
+                        nextObject.vX = vX * store.canvas.scale / store.canvas.vectorsScale;
+                        nextObject.vY = vY * store.canvas.scale / store.canvas.vectorsScale;
                     }
                 }
 
@@ -89,17 +89,17 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     }
 
     const wheel = (e: WheelEvent) => {
-        switch (store.view.mode) {
-            case VIEW_MODE.WATCH: {
-                store.canvas.scale *= e.deltaY > 0 ? 1.1 : 0.9
+        e.preventDefault();
 
-                if (store.canvas.scale < 1) {
-                    store.canvas.scale = 1
-                }
+        if (!store.canvas.isMouseDown) {
+            store.canvas.scale *= e.deltaY > 0 ? 1.1 : 0.9
 
-                break;
+            if (store.canvas.scale < 1) {
+                store.canvas.scale = 1
             }
+        }
 
+        switch (store.view.mode) {
             case VIEW_MODE.ADDITIONAL : {
                 if (additionalObjIdRef.current !== undefined) {
                     const nextObject = store.nextObjects[additionalObjIdRef.current];
@@ -115,6 +115,8 @@ export const useEngine = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
     }
 
     React.useEffect(() => {
+        document.oncontextmenu = () => false;
+
         canvasRef.current?.addEventListener('mousedown', mousedown)
         canvasRef.current?.addEventListener('mouseup', mouseup)
         canvasRef.current?.addEventListener('mousemove', mousemove)

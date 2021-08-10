@@ -1,6 +1,6 @@
 import React from "react";
 import "./Menu.css";
-import {store, VIEW_MODE} from "../../store";
+import {store} from "../../store";
 import {useMenu} from "./Menu.hooks";
 import {Button} from "../Button/Button";
 

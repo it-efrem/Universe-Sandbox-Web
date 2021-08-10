@@ -1,8 +1,12 @@
 import React from "react";
 import {store, VIEW_MODE} from "../../store";
+import {useContext} from "../../reducer/reducer.hooks";
 
 // TODO: пауза, текущее время, скорость перемотки
 export const useMenu = () => {
+    const {state, dispatch} = useContext();
+
+    // todo: Вынести это в context
     const [lastFPS, setLastFPS] = React.useState(0);
     const [lastPPS, setLastPPS] = React.useState(0);
     const [objectsCount, setObjectsCount] = React.useState(0);
@@ -38,6 +42,10 @@ export const useMenu = () => {
     }, [])
 
     const handleClickWatchMode = () => {
+        dispatch({
+            type: 'MODE',
+            payload: VIEW_MODE.WATCH
+        })
         store.view.mode = VIEW_MODE.WATCH;
 
         setIsWatch(true);
@@ -45,6 +53,10 @@ export const useMenu = () => {
     }
 
     const handleClickAdditionalMode = () => {
+        dispatch({
+            type: 'MODE',
+            payload: VIEW_MODE.ADDITIONAL
+        })
         store.view.mode = VIEW_MODE.ADDITIONAL;
 
         setIsWatch(false);

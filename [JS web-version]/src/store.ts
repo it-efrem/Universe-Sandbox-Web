@@ -52,6 +52,7 @@ export const store = {
         isMouseDown: false,
 
         gridCount: 10,
+        vectorsScale: 100,
     },
     nextObjects: [
         {
