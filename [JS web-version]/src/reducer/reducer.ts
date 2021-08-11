@@ -1,11 +1,18 @@
 import {IAction, TYPE_ACTION} from "./actions";
 import {engineStore} from "../engine/store";
+import {ReactStoreType} from "./initialReactStore";
 
-export const reducer = (reactStore: any, action: IAction) => {
+export const reducer = (reactStore: ReactStoreType, action: IAction) => {
     switch (action.type) {
         case TYPE_ACTION.MODE: {
             reactStore.menu.mode = action.payload;
             engineStore.settings.viewMode = action.payload;
+            break;
+        }
+
+        case TYPE_ACTION.PAUSE: {
+            reactStore.menu.isPause = action.payload;
+            engineStore.settings.isPause = action.payload;
             break;
         }
 

@@ -8,6 +8,7 @@ import {
     gridChangeAction,
     labelsChangeAction,
     modeChangeAction,
+    pauseChangeAction,
     setTargetTimeSpeedAction,
     statsUpdateAction,
     tidalForcesChangeAction
@@ -31,6 +32,10 @@ export const useMenu = () => {
             clearInterval(intervalId)
         }
     }, [])
+
+    const handleClickPause = () => {
+        dispatch(pauseChangeAction(!engineStore.settings.isPause))
+    }
 
     const handleClickWatchMode = () => {
         dispatch(modeChangeAction(VIEW_MODE.WATCH))
@@ -70,6 +75,7 @@ export const useMenu = () => {
     }
 
     return {
+        handleClickPause,
         handleClickWatchMode,
         handleClickAdditionalMode,
         handleClickIsGrid,

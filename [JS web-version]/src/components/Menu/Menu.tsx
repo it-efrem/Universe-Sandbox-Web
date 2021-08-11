@@ -12,6 +12,7 @@ import {normalizeNumber} from "../../utils/other";
 // todo: re-renders
 function Menu() {
     const {
+        handleClickPause,
         handleClickWatchMode,
         handleClickAdditionalMode,
         handleClickIsGrid,
@@ -72,7 +73,8 @@ function Menu() {
     return (
         <div className="Menu_container">
             <div className="Menu_container_part">
-                <div className="Menu_container_item">
+                <div className="Menu_container_item"
+                     onClick={handleClickPause}>
                     {
                         engineStore.settings.isPause ?
                             <Button isActive={engineStore.settings.isPause} icon={<i className="fas fa-play"/>}/> :

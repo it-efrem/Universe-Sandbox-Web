@@ -11,6 +11,7 @@ export const initialReactStore = {
         targetTimeSpeed: 0,
 
         mode: VIEW_MODE.WATCH,
+        isPause: engineStore.settings.isPause,
         isGrid: engineStore.settings.isGrid,
         isLabels: engineStore.settings.isLabels,
         isForceLines: engineStore.settings.isForceLines,
@@ -19,3 +20,5 @@ export const initialReactStore = {
         isCollide: engineStore.settings.isCollide,
     },
 };
+
+export type ReactStoreType = typeof initialReactStore;

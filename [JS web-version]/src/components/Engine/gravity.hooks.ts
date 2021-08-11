@@ -39,7 +39,7 @@ export const useGravity = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
         // todo: чтобы не было резких скачков - нужно дождаться определения lastPPS
         //  но в первую секунду пауза, нужно вешать загрузочный экран
         //  или придумать как пофиксить это
-        if (engineStore.stats.lastPPS) {
+        if (!engineStore.settings.isPause && engineStore.stats.lastPPS) {
             engineStore.universe.currentTimeStamp += engineStore.settings.targetTimeSpeed / engineStore.stats.lastPPS;
 
             // todo: optimisation

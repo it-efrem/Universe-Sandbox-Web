@@ -1,6 +1,7 @@
 import {VIEW_MODE} from "../engine/store";
 
 export enum TYPE_ACTION {
+    PAUSE,
     MODE,
     STATS,
     TARGET_TIME_SPEED,
@@ -29,6 +30,11 @@ export const statsUpdateAction = (payload: {
 
 export const modeChangeAction = (payload: VIEW_MODE) => ({
     type: TYPE_ACTION.MODE,
+    payload,
+})
+
+export const pauseChangeAction = (payload: boolean) => ({
+    type: TYPE_ACTION.PAUSE,
     payload,
 })
 
