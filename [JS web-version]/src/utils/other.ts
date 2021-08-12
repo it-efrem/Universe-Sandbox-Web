@@ -4,17 +4,17 @@ export const getRadius = (mass: number) => {
     return Math.sqrt(mass) * Math.PI * 20
 }
 
-export const getPositionOnUniverse = (e: MouseEvent, storeCanvas: any) => {
+export const getPositionOnUniverse = (x_canvas: number, y_canvas: number, storeCanvas: any) => {
     return [
-        (e.x - storeCanvas.centerX) * storeCanvas.scale + storeCanvas.offsetX,
-        (e.y - storeCanvas.centerY) * storeCanvas.scale + storeCanvas.offsetY,
+        (x_canvas - storeCanvas.centerX) * storeCanvas.scale + storeCanvas.offsetX,
+        (y_canvas - storeCanvas.centerY) * storeCanvas.scale + storeCanvas.offsetY,
     ]
 }
 
-export const getPositionOnCanvasByZero = (e: MouseEvent, storeCanvas: any) => {
+export const getPositionOnCanvasByZero = (x_canvas: number, y_canvas: number, storeCanvas: any) => {
     return [
-        (e.x - storeCanvas.clickX),
-        (e.y - storeCanvas.clickY),
+        (x_canvas - storeCanvas.clickX),
+        (y_canvas - storeCanvas.clickY),
     ]
 }
 
