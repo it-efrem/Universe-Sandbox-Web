@@ -10,7 +10,7 @@ export const store = {
     menu: {
         targetTimeSpeed: 0,
 
-        mode: VIEW_MODE.WATCH,
+        viewMode: VIEW_MODE.WATCH,
         isPause: false,
         isGrid: false,
         isLabels: false,

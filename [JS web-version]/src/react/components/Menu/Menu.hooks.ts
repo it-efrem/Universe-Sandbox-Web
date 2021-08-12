@@ -6,7 +6,7 @@ import {
     forceLinesChangeAction,
     fragmentsChangeAction,
     gridChangeAction,
-    labelsChangeAction,
+    labelsChangeAction, menuUpdateAction,
     modeChangeAction,
     pauseChangeAction,
     setTargetTimeSpeedAction,
@@ -19,6 +19,8 @@ export const useMenu = () => {
     const {dispatch} = useReactStore();
 
     React.useEffect(() => {
+        dispatch(menuUpdateAction(engine.store.settings))
+
         // Data updater
         const intervalId = setInterval(() => {
             dispatch(statsUpdateAction({

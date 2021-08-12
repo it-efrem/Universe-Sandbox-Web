@@ -5,7 +5,7 @@ import {engine} from "../../index";
 export const reducer = (reactStore: ReactStoreType, action: IAction) => {
     switch (action.type) {
         case TYPE_ACTION.MODE: {
-            reactStore.menu.mode = action.payload;
+            reactStore.menu.viewMode = action.payload;
             engine.store.settings.viewMode = action.payload;
             break;
         }
@@ -18,6 +18,11 @@ export const reducer = (reactStore: ReactStoreType, action: IAction) => {
 
         case TYPE_ACTION.STATS: {
             reactStore.stats = action.payload;
+            break;
+        }
+
+        case TYPE_ACTION.MENU: {
+            reactStore.menu = action.payload;
             break;
         }
 

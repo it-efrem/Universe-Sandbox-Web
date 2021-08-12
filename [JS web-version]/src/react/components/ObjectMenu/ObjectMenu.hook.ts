@@ -37,7 +37,7 @@ export const useObjectMenu = () => {
                     speed: normalizeNumber(getVectorLength(object.vX, object.vY)),
                     radius: normalizeNumber(getRadius(object.mass)),
                 })
-            } catch {
+            } catch (e) {
                 setObjectInfo(undefined)
             }
         });
@@ -47,6 +47,12 @@ export const useObjectMenu = () => {
         }
     }, []);
 
+    const handleChangeObjectMass = (value: number) => {
+        if (engine.store.activeObjectId) {
+            engine.store.nextObjects[engine.store.activeObjectId].mass = value;
+        }
+    }
+
     const handleClickCloseMenu = () => {
         engine.store.activeObjectId = undefined;
     }
@@ -54,6 +60,6 @@ export const useObjectMenu = () => {
     const isVisible = Boolean(objectInfo);
 
     return {
-        isVisible, objectInfo, handleClickCloseMenu
+        isVisible, objectInfo, handleClickCloseMenu, handleChangeObjectMass
     }
 }

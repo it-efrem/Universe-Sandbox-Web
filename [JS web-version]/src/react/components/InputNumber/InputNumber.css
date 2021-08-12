@@ -1,52 +1,53 @@
-.NumberInput_container {
+.InputNumber_container {
     position: relative;
-    width: 200px;
+    width: 150px;
 }
 
-.NumberInput_container:hover .NumberInput_buttons {
+.InputNumber_container:hover .InputNumber_buttons {
     display: flex;
 }
 
-.NumberInput_container:hover .NumberInput_input input {
+.InputNumber_container:hover .InputNumber_input input {
     border: 1px solid #929292;
     background: #3d3d3d;
 }
 
 
-.NumberInput_buttons {
+.InputNumber_buttons {
     display: none;
 
     position: absolute;
+    left: -20px;
     bottom: 1.5em;
     background: #242424;
-    padding: 6px 3px;
-    transform: translateX(-30%);
+    padding: 4px 2px;
 }
 
-.NumberInput_buttons button {
+.InputNumber_buttons button {
     background: #3d3d3d;
     border: 1px solid #929292;
     color: #929292;
     text-align: center;
     margin: 0 2px;
-    border-radius: 5px;
+    border-radius: 2px;
     min-height: 2em;
     height: 2em;
     width: 3em;
+    font-size: 12px;
 }
 
-.NumberInput_buttons button:hover {
+.InputNumber_buttons button:hover {
     cursor: pointer;
     background: #929292;
     border: 1px solid #929292;
     color: #3d3d3d;
 }
 
-.NumberInput_input {
+.InputNumber_input {
 
 }
 
-.NumberInput_input input {
+.InputNumber_input input {
     max-width: 60px;
     padding: 3px 6px;
     margin: 0;

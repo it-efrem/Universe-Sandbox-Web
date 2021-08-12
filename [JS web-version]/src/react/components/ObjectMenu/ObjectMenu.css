@@ -45,10 +45,31 @@
     font-size: 12px;
 }
 
+.ObjectMenu_label-mass {
+    min-width: 18px;
+}
+
 .ObjectMenu_label i {
     min-width: 24px;
 }
 
 .ObjectMenu_value {
+    font-size: 12px;
+}
+
+.ObjectMenu_value .InputNumber_container {
+    width: 130px;
+}
+
+.ObjectMenu_value .InputNumber_buttons {
+    width: 160px;
+    left: -42px;
+}
+
+.ObjectMenu_value .InputNumber_input {
+    width: 100px;
+}
+
+.ObjectMenu_value .InputNumber_input input {
     font-size: 12px;
 }

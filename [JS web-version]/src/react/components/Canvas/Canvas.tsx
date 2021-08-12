@@ -8,7 +8,7 @@ function Canvas() {
     const {canvasRef} = useCanvas();
     const {state} = useReactStore();
 
-    const cursorType = VIEW_MODE[state.menu.mode];
+    const cursorType = VIEW_MODE[state.menu.viewMode];
     const canvasClassName = `Canvas_cursor__${cursorType}`;
 
     return (

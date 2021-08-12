@@ -1,9 +1,10 @@
 import React from "react";
 import {useObjectMenu} from "./ObjectMenu.hook";
 import "./ObjectMenu.css";
+import {InputNumber} from "../InputNumber/InputNumber";
 
 export const ObjectMenu = () => {
-    const {isVisible, objectInfo, handleClickCloseMenu} = useObjectMenu();
+    const {isVisible, objectInfo, handleClickCloseMenu, handleChangeObjectMass} = useObjectMenu();
 
     return React.useMemo(() => {
         if (!isVisible || !objectInfo) {
@@ -21,8 +22,11 @@ export const ObjectMenu = () => {
                         </div>
                     </div>
                     <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label"><i className="fas fa-weight-hanging"/></div>
-                        <div className="ObjectMenu_value">{objectInfo.mass}</div>
+                        <div className="ObjectMenu_label ObjectMenu_label-mass"><i className="fas fa-weight-hanging"/></div>
+                        <div className="ObjectMenu_value">
+                            <InputNumber value={objectInfo.mass}
+                                         onChange={handleChangeObjectMass}/>
+                        </div>
                     </div>
                     <div className="ObjectMenu_row">
                         <div className="ObjectMenu_label"><i className="fas fa-circle-notch"/></div>

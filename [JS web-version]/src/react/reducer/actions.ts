@@ -4,6 +4,7 @@ export enum TYPE_ACTION {
     PAUSE,
     MODE,
     STATS,
+    MENU,
     TARGET_TIME_SPEED,
     IS_GRID,
     IS_LABELS,
@@ -25,6 +26,20 @@ export const statsUpdateAction = (payload: {
     objectsCount: number,
 }) => ({
     type: TYPE_ACTION.STATS,
+    payload,
+})
+
+export const menuUpdateAction = (payload: {
+    viewMode: VIEW_MODE,
+    isPause: boolean,
+    isGrid: boolean,
+    isLabels: boolean,
+    isForceLines: boolean,
+    isTidalForces: boolean,
+    isFragments: boolean,
+    isCollide: boolean,
+}) => ({
+    type: TYPE_ACTION.MENU,
     payload,
 })
 

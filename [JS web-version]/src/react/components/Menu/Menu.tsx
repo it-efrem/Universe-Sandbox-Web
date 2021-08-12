@@ -10,7 +10,7 @@ import {normalizeNumber} from "../../../utils/other";
 import {engine} from "../../../index";
 
 import "./Menu.css";
-import {NumberInput} from "../InputNumber/NumberInput";
+import {InputNumber} from "../InputNumber/InputNumber";
 
 // todo: re-renders
 function Menu() {
@@ -34,7 +34,7 @@ function Menu() {
                 objectsCount,
             },
             menu: {
-                mode,
+                viewMode,
                 isGrid,
                 isLabels,
                 isForceLines,
@@ -45,8 +45,8 @@ function Menu() {
         }
     } = useReactStore();
 
-    const isWatch = mode === VIEW_MODE.WATCH;
-    const isAdditional = mode === VIEW_MODE.ADDITIONAL;
+    const isWatch = viewMode === VIEW_MODE.WATCH;
+    const isAdditional = viewMode === VIEW_MODE.ADDITIONAL;
     const currentTimeStr = moment.unix(engine.store.universe.currentTimeStamp).format("YYYY-MM-DD HH:mm:ss")
     const currentTimeSpeedStr = React.useMemo(() => {
         const duration = moment.duration(engine.store.settings.targetTimeSpeed * 1000);
@@ -89,7 +89,7 @@ function Menu() {
                 <div className="Menu_container_item">
                     <div className="Menu_text">{currentTimeSpeedStr}/sec</div>
                     <div className="Menu_text">
-                        <NumberInput value={engine.store.settings.targetTimeSpeed}
+                        <InputNumber value={engine.store.settings.targetTimeSpeed}
                                      onChange={handleInputTargetTimeSpeed}/>
                     </div>
                 </div>

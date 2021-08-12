@@ -1,35 +1,36 @@
 import React from "react";
-import "./NumberInput.css";
-import {engine} from "../../../index";
+import "./InputNumber.css";
 
-interface NumberInputProps {
+interface InputNumberProps {
     value: number;
     onChange: (value: number) => void;
 }
 
-export const NumberInput: React.FC<NumberInputProps> = ({value, onChange}) => {
-    const handleOnChange = (e: any) => onChange(e.target.value)
-    const current = engine.store.settings.targetTimeSpeed;
+export const InputNumber: React.FC<InputNumberProps> = ({value, onChange}) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const currentValue = parseFloat(inputRef?.current?.value || '1');
+
+    const handleOnChange = (e: any) => onChange(parseFloat(e.target.value))
 
     const dividedBy10 = (e: any) => {
-        onChange(current / 10);
+        onChange(currentValue / 10);
     }
 
     const dividedBy2 = (e: any) => {
-        onChange(current / 2);
+        onChange(currentValue / 2);
     }
 
     const multiplyBy2 = (e: any) => {
-        onChange(current * 2);
+        onChange(currentValue * 2);
     }
 
     const multiplyBy10 = (e: any) => {
-        onChange(current * 10);
+        onChange(currentValue * 10);
     }
 
     return (
-        <div className="NumberInput_container">
-            <div className="NumberInput_buttons">
+        <div className="InputNumber_container">
+            <div className="InputNumber_buttons">
                 <button onClick={dividedBy10}>
                     x0.1
                 </button>
@@ -43,8 +44,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({value, onChange}) => {
                     x10
                 </button>
             </div>
-            <div className="NumberInput_input">
-                <input type="text" value={value} onChange={handleOnChange}/>
+            <div className="InputNumber_input">
+                <input ref={inputRef} type="text" value={value} onChange={handleOnChange}/>
             </div>
         </div>
     )
