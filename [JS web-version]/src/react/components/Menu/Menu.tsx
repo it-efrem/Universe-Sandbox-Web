@@ -10,6 +10,7 @@ import {normalizeNumber} from "../../../utils/other";
 import {engine} from "../../../index";
 
 import "./Menu.css";
+import {NumberInput} from "../InputNumber/NumberInput";
 
 // todo: re-renders
 function Menu() {
@@ -88,13 +89,9 @@ function Menu() {
                 <div className="Menu_container_item">
                     <div className="Menu_text">{currentTimeSpeedStr}/sec</div>
                     <div className="Menu_text">
-                        <input type="text"
-                               className="Menu_input"
-                               value={engine.store.settings.targetTimeSpeed}
-                               onChange={(e) => handleInputTargetTimeSpeed(e.target.value)}/>
+                        <NumberInput value={engine.store.settings.targetTimeSpeed}
+                                     onChange={handleInputTargetTimeSpeed}/>
                     </div>
-                    <Button icon={<i className="fas fa-fast-backward"/>}/>
-                    <Button icon={<i className="fas fa-fast-forward"/>}/>
                 </div>
             </div>
 

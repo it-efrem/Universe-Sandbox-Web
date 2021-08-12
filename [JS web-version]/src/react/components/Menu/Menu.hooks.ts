@@ -70,8 +70,8 @@ export const useMenu = () => {
         dispatch(collideChangeAction(!engine.store.settings.isCollide));
     }
 
-    const handleInputTargetTimeSpeed = (value: string) => {
-        const targetTimeSpeedNumber = Number(value) || 1;
+    const handleInputTargetTimeSpeed = (value: number) => {
+        const targetTimeSpeedNumber = Math.max(value, 1);
         dispatch(setTargetTimeSpeedAction(targetTimeSpeedNumber));
     }
 

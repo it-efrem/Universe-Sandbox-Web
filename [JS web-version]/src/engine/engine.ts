@@ -1,7 +1,7 @@
 import {measureFrequency} from "../utils/measureFrequency";
 import {detectCanvasCollision, detectUniverseCollision, getRadius, getVectorLength} from "../utils/other";
 import {moveByVector} from "./tools/tools";
-import {EngineListenerType, EngineStoreType, GravityObjectsType, VIEW_MODE} from "./types";
+import {EngineListenerType, EngineStoreType, GravityObjectsType, IGravityObject, VIEW_MODE} from "./types";
 import {drawObjectName} from "./draw/drawObjectName";
 import {drawObject} from "./draw/drawObject";
 import {drawForceLine} from "./draw/drawForceLine";
@@ -169,12 +169,14 @@ export class Engine {
             Object.entries(this.store.nextObjects)
                 .forEach(([objectName, nextObject]) => {
                     const lastObject = this.store.lastObjects[objectName];
+                    const lastObject_x = lastObject?.x | 0;
+                    const lastObject_y = lastObject?.y | 0;
 
-                    if (nextObject && lastObject) {
-                        const diffX = (nextObject.x - lastObject.x) / physicsToDrawTimeRelation;
-                        const diffY = (nextObject.y - lastObject.y) / physicsToDrawTimeRelation;
-                        const newX = lastObject.x + diffX;
-                        const newY = lastObject.y + diffY;
+                    if (nextObject) {
+                        const diffX = (nextObject.x - lastObject_x) / physicsToDrawTimeRelation;
+                        const diffY = (nextObject.y - lastObject_y) / physicsToDrawTimeRelation;
+                        const newX = lastObject_x + diffX;
+                        const newY = lastObject_y + diffY;
 
                         const x_canvas = (newX - this.store.canvas.offsetX + (this.store.canvas.centerX * this.store.canvas.scale)) / this.store.canvas.scale;
                         const y_canvas = (newY - this.store.canvas.offsetY + (this.store.canvas.centerY * this.store.canvas.scale)) / this.store.canvas.scale;
@@ -217,58 +219,59 @@ export class Engine {
         // todo: чтобы не было резких скачков - нужно дождаться определения lastPPS
         //  но в первую секунду пауза, нужно вешать загрузочный экран
         //  или придумать как пофиксить это
-        if (!this.store.settings.isPause && this.store.stats.lastPPS > 0) {
-            this.store.universe.currentTimeStamp += this.store.settings.targetTimeSpeed / this.store.stats.lastPPS;
-
+        if (this.store.stats.lastPPS > 0) {
             // todo: optimisation
             this.store.lastObjects = {...this.store.nextObjects};
             const nextObjectsArr = Object.entries(this.store.nextObjects);
 
-            for (let a = 0; a < nextObjectsArr.length; a++) {
-                for (let b = a + 1; b < nextObjectsArr.length; b++) {
-                    const [nameA, objectA] = nextObjectsArr[a];
-                    const [nameB, objectB] = nextObjectsArr[b];
+            if (!this.store.settings.isPause) {
+                this.store.universe.currentTimeStamp += this.store.settings.targetTimeSpeed / this.store.stats.lastPPS;
+                for (let a = 0; a < nextObjectsArr.length; a++) {
+                    for (let b = a + 1; b < nextObjectsArr.length; b++) {
+                        const [nameA, objectA] = nextObjectsArr[a];
+                        const [nameB, objectB] = nextObjectsArr[b];
 
-                    //todo: refactoring
-                    if (objectA.isGravity && objectB.isGravity && objectA.mass && objectB.mass) {
-                        const x_pos = Math.abs(objectA.x - objectB.x);
-                        const y_pos = Math.abs(objectA.y - objectB.y);
+                        //todo: refactoring
+                        if (objectA.isGravity && objectB.isGravity && objectA.mass && objectB.mass) {
+                            const x_pos = Math.abs(objectA.x - objectB.x);
+                            const y_pos = Math.abs(objectA.y - objectB.y);
 
-                        const totalDistance = getVectorLength(x_pos, y_pos);
-                        const lastPPS = this.store.stats.lastPPS;
-                        const gravityConst = this.store.universe.gravityConst;
-                        const targetTimeSpeed = this.store.settings.targetTimeSpeed;
+                            const totalDistance = getVectorLength(x_pos, y_pos);
+                            const lastPPS = this.store.stats.lastPPS;
+                            const gravityConst = this.store.universe.gravityConst;
+                            const targetTimeSpeed = this.store.settings.targetTimeSpeed;
 
-                        const [
-                            a_x_vector,
-                            b_x_vector,
-                        ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.x, objectB.x, objectA.mass, objectB.mass);
+                            const [
+                                a_x_vector,
+                                b_x_vector,
+                            ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.x, objectB.x, objectA.mass, objectB.mass);
 
-                        const [
-                            a_y_vector,
-                            b_y_vector,
-                        ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.y, objectB.y, objectA.mass, objectB.mass);
+                            const [
+                                a_y_vector,
+                                b_y_vector,
+                            ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.y, objectB.y, objectA.mass, objectB.mass);
 
-                        objectA.vX += a_x_vector
-                        objectA.vY += a_y_vector
+                            objectA.vX += a_x_vector
+                            objectA.vY += a_y_vector
 
-                        objectB.vX += b_x_vector
-                        objectB.vY += b_y_vector
+                            objectB.vX += b_x_vector
+                            objectB.vY += b_y_vector
 
-                        const isCollision = this.store.settings.isCollide && detectUniverseCollision(totalDistance, getRadius(objectA.mass), getRadius(objectB.mass))
+                            const isCollision = this.store.settings.isCollide && detectUniverseCollision(totalDistance, getRadius(objectA.mass), getRadius(objectB.mass))
 
-                        if (isCollision) {
-                            const totalMass = objectA.mass + objectB.mass;
-                            const xForce = (objectA.vX * objectA.mass + objectB.vX * objectB.mass) / totalMass;
-                            const yForce = (objectA.vY * objectA.mass + objectB.vY * objectB.mass) / totalMass;
+                            if (isCollision) {
+                                const totalMass = objectA.mass + objectB.mass;
+                                const xForce = (objectA.vX * objectA.mass + objectB.vX * objectB.mass) / totalMass;
+                                const yForce = (objectA.vY * objectA.mass + objectB.vY * objectB.mass) / totalMass;
 
-                            objectA.mass = totalMass;
-                            objectA.vX = xForce;
-                            objectA.vY = yForce;
+                                objectA.mass = totalMass;
+                                objectA.vX = xForce;
+                                objectA.vY = yForce;
 
-                            // todo: починить мерж, сейчас при меже большой объект может резко скокнуть на место легкого
-                            // todo: пофиксить костыль с массой
-                            objectB.mass = 0;
+                                // todo: починить мерж, сейчас при меже большой объект может резко скокнуть на место легкого
+                                // todo: пофиксить костыль с массой
+                                objectB.mass = 0;
+                            }
                         }
                     }
                 }
@@ -291,7 +294,7 @@ export class Engine {
                             }
                         }
 
-                        if (object.isGravity) {
+                        if (!this.store.settings.isPause && object.isGravity) {
                             const lastPPS = Math.max(this.store.stats.lastPPS, 1);
 
                             object.x = object.x + object.vX * this.store.settings.targetTimeSpeed / lastPPS;

@@ -1,0 +1,57 @@
+.NumberInput_container {
+    position: relative;
+    width: 200px;
+}
+
+.NumberInput_container:hover .NumberInput_buttons {
+    display: flex;
+}
+
+.NumberInput_container:hover .NumberInput_input input {
+    border: 1px solid #929292;
+    background: #3d3d3d;
+}
+
+
+.NumberInput_buttons {
+    display: none;
+
+    position: absolute;
+    bottom: 1.5em;
+    background: #242424;
+    padding: 6px 3px;
+    transform: translateX(-30%);
+}
+
+.NumberInput_buttons button {
+    background: #3d3d3d;
+    border: 1px solid #929292;
+    color: #929292;
+    text-align: center;
+    margin: 0 2px;
+    border-radius: 5px;
+    min-height: 2em;
+    height: 2em;
+    width: 3em;
+}
+
+.NumberInput_buttons button:hover {
+    cursor: pointer;
+    background: #929292;
+    border: 1px solid #929292;
+    color: #3d3d3d;
+}
+
+.NumberInput_input {
+
+}
+
+.NumberInput_input input {
+    max-width: 60px;
+    padding: 3px 6px;
+    margin: 0;
+    height: 1em;
+    background: #242424;
+    border: 1px solid #242424;
+    color: #929292;
+}

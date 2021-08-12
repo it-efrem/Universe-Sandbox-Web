@@ -5,6 +5,7 @@ import {mouseDownEventListener} from "../../../game/eventListeners/mouseDown";
 import {mouseMoveEventListener} from "../../../game/eventListeners/mouseMove";
 import {mouseUpEventListener} from "../../../game/eventListeners/mouseUp";
 import {wheelEventListener} from "../../../game/eventListeners/wheel";
+import {keyDownListener} from "../../../game/eventListeners/keydown";
 
 export const useCanvas = () => {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -16,6 +17,7 @@ export const useCanvas = () => {
             resizeEventListener()
 
             window.addEventListener('resize', resizeEventListener)
+            window.addEventListener('keydown', keyDownListener)
 
             engine.addCanvasListener('mousedown', mouseDownEventListener)
             engine.addCanvasListener('mousemove', mouseMoveEventListener)
@@ -26,6 +28,7 @@ export const useCanvas = () => {
 
             return () => {
                 window.addEventListener('resize', resizeEventListener)
+                window.addEventListener('keydown', keyDownListener)
 
                 engine.removeCanvasListener('mousedown', mouseDownEventListener)
                 engine.removeCanvasListener('mousemove', mouseMoveEventListener)
