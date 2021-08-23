@@ -1,5 +1,5 @@
 import React from "react";
-import {getRadius, getVectorLength, normalizeNumber} from "../../../utils/other";
+import {getVectorLength, normalizeNumber} from "../../../utils/other";
 import {engine} from "../../../index";
 
 export type ObjectInfoType = {
@@ -31,11 +31,11 @@ export const useObjectMenu = () => {
 
                 setObjectInfo({
                     id: activeObjectId,
-                    x: normalizeNumber(object.x),
-                    y: normalizeNumber(object.y),
+                    x: normalizeNumber(object.coordinates.x),
+                    y: normalizeNumber(object.coordinates.y),
                     mass: normalizeNumber(object.mass),
-                    speed: normalizeNumber(getVectorLength(object.vX, object.vY)),
-                    radius: normalizeNumber(getRadius(object.mass)),
+                    speed: normalizeNumber(getVectorLength(object.vectorMove.x, object.vectorMove.y)),
+                    radius: normalizeNumber(object.radius.atmosphere),
                 })
             } catch (e) {
                 setObjectInfo(undefined)
@@ -47,10 +47,11 @@ export const useObjectMenu = () => {
         }
     }, []);
 
+    // todo: with composition
     const handleChangeObjectMass = (value: number) => {
-        if (engine.store.activeObjectId) {
-            engine.store.nextObjects[engine.store.activeObjectId].mass = value;
-        }
+        // if (engine.store.activeObjectId) {
+        //     engine.store.nextObjects[engine.store.activeObjectId].mass = value;
+        // }
     }
 
     const handleClickCloseMenu = () => {

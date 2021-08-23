@@ -1,7 +1,6 @@
 import {VIEW_MODE} from "../../engine/types";
-import {getPositionOnUniverse, getRandomName} from "../../utils/other";
 import {engine} from "../../index";
-import {createObjectToUniverseByCanvasClick} from "../objects/createObjectToUniverseByCanvasClick";
+import {createObjectToUniverseByCanvasClick} from "../gravityObject/createObjectToUniverseByCanvasClick";
 
 export const mouseDownEventListener = (e: MouseEvent) => {
     e.preventDefault();

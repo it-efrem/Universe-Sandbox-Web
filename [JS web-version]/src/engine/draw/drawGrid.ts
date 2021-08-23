@@ -23,7 +23,7 @@ export const drawGrid = (store: EngineStoreType, ctx: CanvasRenderingContext2D, 
         )
     }
 
-    ctx.strokeStyle = `rgba(208, 208, 208, ${opacity})`;
+    ctx.strokeStyle = `rgba(50, 50, 50, ${opacity})`;
     ctx.save();
 
     yArr.forEach(x => {

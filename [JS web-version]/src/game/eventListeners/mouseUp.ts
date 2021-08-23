@@ -1,6 +1,6 @@
 import {VIEW_MODE} from "../../engine/types";
 import {engine} from "../../index";
-import {finishCreationObject} from "../objects/finishCreationObject";
+import {finishCreationObject} from "../gravityObject/finishCreationObject";
 
 export const mouseUpEventListener = (e: MouseEvent) => {
     e.preventDefault();

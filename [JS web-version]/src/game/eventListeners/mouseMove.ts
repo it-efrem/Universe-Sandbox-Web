@@ -1,6 +1,6 @@
 import {VIEW_MODE} from "../../engine/types";
 import {engine} from "../../index";
-import {setCreationObjectForceVector} from "../objects/setCreationObjectForceVector";
+import {setCreationObjectForceVector} from "../gravityObject/setCreationObjectForceVector";
 
 export const mouseMoveEventListener = (e: MouseEvent) => {
     e.preventDefault();

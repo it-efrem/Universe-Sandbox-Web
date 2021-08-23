@@ -5,7 +5,7 @@ export const finishCreationObject = () => {
         const nextObject = engine.store.nextObjects[engine.store.creationObjectId];
 
         if (nextObject) {
-            nextObject.isGravity = true;
+            nextObject.isSimulated = true;
             engine.store.creationObjectId = undefined;
         }
     }

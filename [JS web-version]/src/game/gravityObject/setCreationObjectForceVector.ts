@@ -8,8 +8,8 @@ export const setCreationObjectForceVector = (x_canvas: number, y_canvas: number)
         if (nextObject) {
             const [vX, vY] = getPositionOnCanvasByZero(x_canvas, y_canvas, engine.store.canvas);
 
-            nextObject.vX = vX * engine.store.canvas.scale / engine.store.canvas.vectorsScale;
-            nextObject.vY = vY * engine.store.canvas.scale / engine.store.canvas.vectorsScale;
+            nextObject.vectorMove.x = vX * engine.store.canvas.scale / engine.store.canvas.vectorsScale;
+            nextObject.vectorMove.y = vY * engine.store.canvas.scale / engine.store.canvas.vectorsScale;
         }
     }
 }

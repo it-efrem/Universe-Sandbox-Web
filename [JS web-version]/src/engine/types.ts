@@ -1,3 +1,5 @@
+import { GravityObjectByNameType } from "../game/gravityObject/GravityObject.types";
+
 export type EngineStoreType = {
     stats: {
         // todo:
@@ -50,30 +52,18 @@ export type EngineStoreType = {
     },
     activeObjectId: string | undefined,
     creationObjectId: string | undefined,
-    nextObjects: GravityObjectsType,
-    lastObjects: GravityObjectsType,
+    nextObjects: GravityObjectByNameType,
+    lastObjects: GravityObjectByNameType,
 };
+
+export interface IPoint2D {
+    x: number,
+    y: number,
+}
 
 export type EngineListenerType = (engineStore: EngineStoreType) => void
 
 export enum VIEW_MODE {
     WATCH,
     ADDITIONAL,
-}
-
-export interface IGravityObject {
-    x: number, // km
-    y: number, // km
-    vX: number, // km/s
-    vY: number, // km/s
-    mass: number,  // kg
-    isGravity: boolean, // todo: is simulated
-}
-
-export type GravityObjectsType = Record<string, IGravityObject>;
-
-export interface IDrawObject extends IGravityObject {
-    x_canvas: number,
-    y_canvas: number,
-    radius_canvas: number,
 }

@@ -1,9 +1,3 @@
-// todo: поправить расчет объема, нужно учитывать плотность
-
-export const getRadius = (mass: number) => {
-    return Math.sqrt(mass) * Math.PI * 20
-}
-
 export const getPositionOnUniverse = (x_canvas: number, y_canvas: number, storeCanvas: any) => {
     return [
         (x_canvas - storeCanvas.centerX) * storeCanvas.scale + storeCanvas.offsetX,
@@ -46,4 +40,8 @@ export const detectCanvasCollision = (a_x: number, a_y: number, a_radius: number
     const isCollision = detectUniverseCollision(distance, a_radius, b_radius);
 
     return isCollision;
+}
+
+export function getRandom(min: number, max: number) {
+    return Math.random() * (max - min) + min;
 }

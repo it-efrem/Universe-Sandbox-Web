@@ -1,11 +1,11 @@
 import {measureFrequency} from "../utils/measureFrequency";
-import {detectCanvasCollision, detectUniverseCollision, getRadius, getVectorLength} from "../utils/other";
+import {detectCanvasCollision, detectUniverseCollision, getVectorLength} from "../utils/other";
 import {moveByVector} from "./tools/tools";
-import {EngineListenerType, EngineStoreType, GravityObjectsType, IGravityObject, VIEW_MODE} from "./types";
-import {drawObjectName} from "./draw/drawObjectName";
-import {drawObject} from "./draw/drawObject";
-import {drawForceLine} from "./draw/drawForceLine";
+import {EngineListenerType, EngineStoreType, VIEW_MODE} from "./types";
 import {drawGrid} from "./draw/drawGrid";
+import {GravityObject} from "../game/gravityObject/GravityObject";
+import {GravityObjectComposition} from "../game/gravityObject/GravityObject.types";
+import {DrawObject} from "../game/drawObject/DrawObject";
 
 export class Engine {
     public canvas: HTMLCanvasElement | null;
@@ -87,24 +87,58 @@ export class Engine {
             activeObjectId: undefined,
             creationObjectId: undefined,
             nextObjects: {
-                'Earth': {
-                    y: 0,
-                    x: 0,
-                    vX: 0,
-                    vY: 0,
-                    mass: 6600, // 10(18)
-                    isGravity: true,
-                },
-                'Moon': {
-                    y: -0,
-                    x: -406000,
-                    vX: 0,
-                    vY: 1.02,
-                    mass: 81.2,
-                    isGravity: true,
-                },
-            } as GravityObjectsType,
-            lastObjects: {} as GravityObjectsType,
+                'Earth': new GravityObject({
+                    coordinates: {
+                        x: 0,
+                        y: 0,
+                    },
+                    vectorMove: {
+                        x: 0,
+                        y: 0,
+                    },
+                    composition: {
+                        [GravityObjectComposition.HYDROGEN]: 1000,
+                        [GravityObjectComposition.WATER]: 400,
+                        [GravityObjectComposition.SILICATES]: 1900,
+                        [GravityObjectComposition.IRON]: 3300,
+                    },
+                    coreForm: [
+                        [0, 0.5, 0.0074, 0.1334144980975718, 0.1836018940949956, -0.003414005423899663, 0.5, 0],
+                        [0.5, 0, 0.76, 0.057751056329688855, 0.9792271080736776, 0.20371166658036471, 1, 0.5],
+                        [1, 0.5, 0.90, 0.8462534407025388, 0.7864295848560977, 1.0231384695889916, 0.5, 1],
+                        [0.5, 1, 0.27, 0.9344921699998242, -0.07970099568524663, 0.819831340978712, 0, 0.5]
+                    ],
+                    rotationVector: 1,
+                    rotationCurrent: 0,
+                    isSimulated: true
+                }),
+                'Moon': new GravityObject({
+                    coordinates: {
+                        x: -406000,
+                        y: 0,
+                    },
+                    vectorMove: {
+                        x: 0,
+                        y: 1.02,
+                    },
+                    composition: {
+                        [GravityObjectComposition.HYDROGEN]: 0.6,
+                        [GravityObjectComposition.WATER]: 0.6,
+                        [GravityObjectComposition.SILICATES]: 50,
+                        [GravityObjectComposition.IRON]: 30,
+                    },
+                    coreForm: [
+                        [0, 0.5, -0.04, 0.30822663293720176, 0.22379906173795241, -0.08517939087081042, 0.5, 0],
+                        [0.5, 0, 0.85, -0.05128102798883854, 0.9008649790048294, 0.13200509519353526, 1, 0.5],
+                        [1, 0.5, 1.09, 0.8492906411283264, 0.6863508784941157, 0.9785806585121479, 0.5, 1],
+                        [0.5, 1, 0.15, 1.0355947249254778, 0.0027087956008774172, 0.7015958406554407, 0, 0.5]
+                    ],
+                    rotationVector: 1,
+                    rotationCurrent: 0,
+                    isSimulated: true
+                })
+            },
+            lastObjects: {},
         }
     }
 
@@ -113,11 +147,17 @@ export class Engine {
         this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     }
 
-    public addCanvasListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLCanvasElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
+    public addCanvasListener<K extends keyof HTMLElementEventMap>(type: K,
+                                                                  listener: (this: HTMLCanvasElement,
+                                                                             ev: HTMLElementEventMap[K]) => any,
+                                                                  options?: boolean | AddEventListenerOptions): void {
         this.canvas?.addEventListener(type, listener, options);
     }
 
-    public removeCanvasListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLCanvasElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
+    public removeCanvasListener<K extends keyof HTMLElementEventMap>(type: K,
+                                                                     listener: (this: HTMLCanvasElement,
+                                                                                ev: HTMLElementEventMap[K]) => any,
+                                                                     options?: boolean | AddEventListenerOptions): void {
         this.canvas?.removeEventListener(type, listener, options);
     }
 
@@ -152,14 +192,22 @@ export class Engine {
         this.measureFPS();
 
         if (this.ctx) {
-            this.ctx.clearRect(0, 0, this.store.canvas.width, this.store.canvas.height);
+
+            this.ctx.save();
+            this.ctx.fillStyle = "rgba(20, 20, 20, 0.9)";
+            this.ctx.fillRect(0, 0, this.store.canvas.width, this.store.canvas.height);
+            this.ctx.restore();
 
             const lastFPS = this.store.stats.lastFPS || this.store.settings.targetFPS;
             const lastPPS = this.store.stats.lastPPS || lastFPS;
             const physicsToDrawTimeRelation = Math.max(lastFPS / lastPPS, 1);
 
-            this.store.canvas.coordinates.zeroX = (-this.store.canvas.offsetX + (this.store.canvas.centerX * this.store.canvas.scale)) / this.store.canvas.scale;
-            this.store.canvas.coordinates.zeroY = (-this.store.canvas.offsetY + (this.store.canvas.centerY * this.store.canvas.scale)) / this.store.canvas.scale;
+            this.store.canvas.coordinates.zeroX =
+                (-this.store.canvas.offsetX + (this.store.canvas.centerX * this.store.canvas.scale)) /
+                this.store.canvas.scale;
+            this.store.canvas.coordinates.zeroY =
+                (-this.store.canvas.offsetY + (this.store.canvas.centerY * this.store.canvas.scale)) /
+                this.store.canvas.scale;
 
             if (this.store.settings.isGrid) {
                 drawGrid(this.store, this.ctx, 1);
@@ -167,37 +215,30 @@ export class Engine {
             }
 
             Object.entries(this.store.nextObjects)
-                .forEach(([objectName, nextObject]) => {
-                    const lastObject = this.store.lastObjects[objectName];
-                    const lastObject_x = lastObject?.x | 0;
-                    const lastObject_y = lastObject?.y | 0;
+                .forEach(([objectId, nextObject]) => {
+                    const lastObject = this.store.lastObjects[objectId];
 
                     if (nextObject) {
-                        const diffX = (nextObject.x - lastObject_x) / physicsToDrawTimeRelation;
-                        const diffY = (nextObject.y - lastObject_y) / physicsToDrawTimeRelation;
-                        const newX = lastObject_x + diffX;
-                        const newY = lastObject_y + diffY;
+                        // todo: Можно ли оптимизировать так: чтобы не создавать объект каждый раз?
+                        const drawObject = new DrawObject(this.store,
+                            this.ctx,
+                            physicsToDrawTimeRelation,
+                            objectId,
+                            nextObject,
+                            lastObject);
 
-                        const x_canvas = (newX - this.store.canvas.offsetX + (this.store.canvas.centerX * this.store.canvas.scale)) / this.store.canvas.scale;
-                        const y_canvas = (newY - this.store.canvas.offsetY + (this.store.canvas.centerY * this.store.canvas.scale)) / this.store.canvas.scale;
-                        const radius_canvas = getRadius(nextObject.mass) / this.store.canvas.scale;
-
-                        const draw_object = {
-                            ...nextObject,
-                            x: newX,
-                            y: newY,
-                            x_canvas,
-                            y_canvas,
-                            radius_canvas,
-                        }
-
-                        drawObject(this.store, this.ctx, objectName, draw_object);
+                        drawObject.drawObject();
 
                         if (this.store.settings.isLabels) {
-                            drawObjectName(this.store, this.ctx, objectName, draw_object);
+                            drawObject.drawLabel();
                         }
-                        if (this.store.settings.isForceLines || !draw_object.isGravity) {
-                            drawForceLine(this.store, this.ctx, objectName, draw_object);
+
+                        if (this.store.settings.isForceLines || !nextObject.isSimulated) {
+                            drawObject.drawForceLines();
+                        }
+
+                        if (this.store.activeObjectId === objectId) {
+                            drawObject.drawActiveObjectStroke()
                         }
                     }
                 })
@@ -227,14 +268,16 @@ export class Engine {
             if (!this.store.settings.isPause) {
                 this.store.universe.currentTimeStamp += this.store.settings.targetTimeSpeed / this.store.stats.lastPPS;
                 for (let a = 0; a < nextObjectsArr.length; a++) {
+                    const [nameA, objectA] = nextObjectsArr[a];
+                    objectA.resetCache();
+
                     for (let b = a + 1; b < nextObjectsArr.length; b++) {
-                        const [nameA, objectA] = nextObjectsArr[a];
                         const [nameB, objectB] = nextObjectsArr[b];
 
                         //todo: refactoring
-                        if (objectA.isGravity && objectB.isGravity && objectA.mass && objectB.mass) {
-                            const x_pos = Math.abs(objectA.x - objectB.x);
-                            const y_pos = Math.abs(objectA.y - objectB.y);
+                        if (objectA.isSimulated && objectB.isSimulated && objectA.mass && objectB.mass) {
+                            const x_pos = Math.abs(objectA.coordinates.x - objectB.coordinates.x);
+                            const y_pos = Math.abs(objectA.coordinates.y - objectB.coordinates.y);
 
                             const totalDistance = getVectorLength(x_pos, y_pos);
                             const lastPPS = this.store.stats.lastPPS;
@@ -244,33 +287,45 @@ export class Engine {
                             const [
                                 a_x_vector,
                                 b_x_vector,
-                            ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.x, objectB.x, objectA.mass, objectB.mass);
+                            ] = moveByVector(lastPPS,
+                                gravityConst,
+                                targetTimeSpeed,
+                                totalDistance,
+                                objectA.coordinates.x,
+                                objectB.coordinates.x,
+                                objectA.mass,
+                                objectB.mass);
 
                             const [
                                 a_y_vector,
                                 b_y_vector,
-                            ] = moveByVector(lastPPS, gravityConst, targetTimeSpeed, totalDistance, objectA.y, objectB.y, objectA.mass, objectB.mass);
+                            ] = moveByVector(lastPPS,
+                                gravityConst,
+                                targetTimeSpeed,
+                                totalDistance,
+                                objectA.coordinates.y,
+                                objectB.coordinates.y,
+                                objectA.mass,
+                                objectB.mass);
 
-                            objectA.vX += a_x_vector
-                            objectA.vY += a_y_vector
+                            objectA.vectorMove.x += a_x_vector
+                            objectA.vectorMove.y += a_y_vector
 
-                            objectB.vX += b_x_vector
-                            objectB.vY += b_y_vector
+                            objectB.vectorMove.x += b_x_vector
+                            objectB.vectorMove.y += b_y_vector
 
-                            const isCollision = this.store.settings.isCollide && detectUniverseCollision(totalDistance, getRadius(objectA.mass), getRadius(objectB.mass))
+                            const isCollision = this.store.settings.isCollide &&
+                                detectUniverseCollision(totalDistance,
+                                    objectA.radius.atmosphere,
+                                    objectB.radius.atmosphere)
 
                             if (isCollision) {
-                                const totalMass = objectA.mass + objectB.mass;
-                                const xForce = (objectA.vX * objectA.mass + objectB.vX * objectB.mass) / totalMass;
-                                const yForce = (objectA.vY * objectA.mass + objectB.vY * objectB.mass) / totalMass;
+                                const [bigObject, smallObject] = objectA.mass > objectB.mass ?
+                                    [objectA, objectB] :
+                                    [objectB, objectA];
 
-                                objectA.mass = totalMass;
-                                objectA.vX = xForce;
-                                objectA.vY = yForce;
-
-                                // todo: починить мерж, сейчас при меже большой объект может резко скокнуть на место легкого
-                                // todo: пофиксить костыль с массой
-                                objectB.mass = 0;
+                                bigObject.mergeWith(smallObject);
+                                smallObject.remove();
                             }
                         }
                     }
@@ -281,24 +336,41 @@ export class Engine {
             // todo: удалять все объекты, которые не должны симулироваться и если ЛКМ поднята
             this.store.nextObjects = Object.fromEntries(
                 nextObjectsArr
-                    .filter(([id, object]) => object.mass > 0)
+                    .filter(([id, object]) => !object.isShouldBeRemoved)
                     .map(([id, object]) => {
 
-                        // detect active object
+                        // detect menu active object
                         if (this.store.canvas.isMouseDown) {
-                            const universe_x = (this.store.canvas.clickX - this.store.canvas.centerX) * this.store.canvas.scale + this.store.canvas.offsetX;
-                            const universe_y = (this.store.canvas.clickY - this.store.canvas.centerY) * this.store.canvas.scale + this.store.canvas.offsetY;
+                            const universe_x = (this.store.canvas.clickX - this.store.canvas.centerX) *
+                                this.store.canvas.scale +
+                                this.store.canvas.offsetX;
+                            const universe_y = (this.store.canvas.clickY - this.store.canvas.centerY) *
+                                this.store.canvas.scale +
+                                this.store.canvas.offsetY;
 
-                            if (detectCanvasCollision(universe_x, universe_y, 1, object.x, object.y, getRadius(object.mass))) {
+                            if (detectCanvasCollision(universe_x,
+                                universe_y,
+                                1,
+                                object.coordinates.x,
+                                object.coordinates.y,
+                                object.radius.atmosphere)) {
                                 this.store.activeObjectId = id;
                             }
                         }
 
-                        if (!this.store.settings.isPause && object.isGravity) {
+                        if (!this.store.settings.isPause && object.isSimulated) {
                             const lastPPS = Math.max(this.store.stats.lastPPS, 1);
 
-                            object.x = object.x + object.vX * this.store.settings.targetTimeSpeed / lastPPS;
-                            object.y = object.y + object.vY * this.store.settings.targetTimeSpeed / lastPPS;
+                            object.coordinates.x =
+                                object.coordinates.x +
+                                object.vectorMove.x *
+                                this.store.settings.targetTimeSpeed /
+                                lastPPS;
+                            object.coordinates.y =
+                                object.coordinates.y +
+                                object.vectorMove.y *
+                                this.store.settings.targetTimeSpeed /
+                                lastPPS;
                         }
 
                         return [id, object]
