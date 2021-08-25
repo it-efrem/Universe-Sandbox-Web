@@ -1,20 +1,18 @@
 import {useCanvas} from "./Canvas.hook";
 import {useReactStore} from "../../reducer/hooks";
-import "./Canvas.css";
-import {VIEW_MODE} from "../../../engine/types";
+import {canvasCursorTypesMap, StyledCanvasCursor} from "./Canvas.styles";
 
 // todo: re-renders
 function Canvas() {
     const {canvasRef} = useCanvas();
     const {state} = useReactStore();
 
-    const cursorType = VIEW_MODE[state.menu.viewMode];
-    const canvasClassName = `Canvas_cursor__${cursorType}`;
+    const cursor = canvasCursorTypesMap[state.menu.viewMode];
 
     return (
-        <canvas ref={canvasRef}
-                className={canvasClassName}
-        />
+        <StyledCanvasCursor cursor={cursor}>
+            <canvas ref={canvasRef}/>
+        </StyledCanvasCursor>
     );
 }
 

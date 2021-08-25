@@ -1,5 +1,5 @@
 import React from "react";
-import "./InputNumber.css";
+import {StyledInputNumberButtons, StyledInputNumberContainer, StyledInputNumberInput} from "./InputNumber.styles";
 
 interface InputNumberProps {
     value: number;
@@ -29,8 +29,8 @@ export const InputNumber: React.FC<InputNumberProps> = ({value, onChange}) => {
     }
 
     return (
-        <div className="InputNumber_container">
-            <div className="InputNumber_buttons">
+        <StyledInputNumberContainer>
+            <StyledInputNumberButtons>
                 <button onClick={dividedBy10}>
                     x0.1
                 </button>
@@ -43,10 +43,10 @@ export const InputNumber: React.FC<InputNumberProps> = ({value, onChange}) => {
                 <button onClick={multiplyBy10}>
                     x10
                 </button>
-            </div>
-            <div className="InputNumber_input">
+            </StyledInputNumberButtons>
+            <StyledInputNumberInput>
                 <input ref={inputRef} type="text" value={value} onChange={handleOnChange}/>
-            </div>
-        </div>
+            </StyledInputNumberInput>
+        </StyledInputNumberContainer>
     )
 }

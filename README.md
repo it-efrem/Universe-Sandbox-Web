@@ -1,5 +1,5 @@
 # Universe Sandbox 2D Web
-> version 0.2.0 
+> version 0.2.1 
 
 ### About
 
@@ -7,7 +7,6 @@ Universe Sandbox 2D Web is an interactive space sandbox gravity simulator video 
 
 ### ToDo
 
-- Release for web
 - Background space
 - Fragments
 - Light and shade
@@ -17,6 +16,8 @@ Universe Sandbox 2D Web is an interactive space sandbox gravity simulator video 
 - Tidal forces
 - General menu
 - Menu animations
+- WebGL draw
+- Web Worker physics
 - Engine optimisations
 - React optimisations
 

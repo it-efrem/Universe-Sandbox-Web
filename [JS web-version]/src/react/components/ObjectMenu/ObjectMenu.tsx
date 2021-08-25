@@ -1,7 +1,16 @@
 import React from "react";
 import {useObjectMenu} from "./ObjectMenu.hook";
-import "./ObjectMenu.css";
 import {InputNumber} from "../InputNumber/InputNumber";
+import {
+    StyledObjectMenuClose,
+    StyledObjectMenuContainer,
+    StyledObjectMenuLabel,
+    StyledObjectMenuLabelMass,
+    StyledObjectMenuRow,
+    StyledObjectMenuTop,
+    StyledObjectMenuValue,
+    StyledObjectMenuWrapper
+} from "./ObjectMenu.styles";
 
 export const ObjectMenu = () => {
     const {isVisible, objectInfo, handleClickCloseMenu, handleChangeObjectMass} = useObjectMenu();
@@ -12,46 +21,50 @@ export const ObjectMenu = () => {
         }
 
         return (
-            <div className="ObjectMenu_wrapper">
-                <div className="ObjectMenu_container">
-                    <div className="ObjectMenu_top">
+            <StyledObjectMenuWrapper>
+                <StyledObjectMenuContainer>
+                    <StyledObjectMenuTop>
                         <div>{objectInfo.id}</div>
-                        <div className="ObjectMenu_close"
-                             onClick={handleClickCloseMenu}>
+                        <StyledObjectMenuClose
+                            onClick={handleClickCloseMenu}>
                             <i className="fas fa-times-circle"/>
-                        </div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label ObjectMenu_label-mass"><i className="fas fa-weight-hanging"/></div>
-                        <div className="ObjectMenu_value">
+                        </StyledObjectMenuClose>
+                    </StyledObjectMenuTop>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel>
+                            <StyledObjectMenuLabelMass>
+                                <i className="fas fa-weight-hanging"/>
+                            </StyledObjectMenuLabelMass>
+                        </StyledObjectMenuLabel>
+                        <StyledObjectMenuValue>
                             <InputNumber value={objectInfo.mass}
                                          onChange={handleChangeObjectMass}/>
-                        </div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label"><i className="fas fa-circle-notch"/></div>
-                        <div className="ObjectMenu_value">{objectInfo.radius}</div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label"><i className="fas fa-tachometer-alt"/></div>
-                        <div className="ObjectMenu_value">{objectInfo.speed}</div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label">
+                        </StyledObjectMenuValue>
+                    </StyledObjectMenuRow>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel><i className="fas fa-circle-notch"/></StyledObjectMenuLabel>
+                        <StyledObjectMenuValue>{objectInfo.radius}</StyledObjectMenuValue>
+                    </StyledObjectMenuRow>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel><i className="fas fa-tachometer-alt"/></StyledObjectMenuLabel>
+                        <StyledObjectMenuValue>{objectInfo.speed}</StyledObjectMenuValue>
+                    </StyledObjectMenuRow>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel>
                             <i className="fas fa-map-marked-alt"/>
                             Coordinates
-                        </div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label">x</div>
-                        <div className="ObjectMenu_value">{objectInfo.x}</div>
-                    </div>
-                    <div className="ObjectMenu_row">
-                        <div className="ObjectMenu_label">y</div>
-                        <div className="ObjectMenu_value">{objectInfo.y}</div>
-                    </div>
-                </div>
-            </div>
+                        </StyledObjectMenuLabel>
+                    </StyledObjectMenuRow>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel>x</StyledObjectMenuLabel>
+                        <StyledObjectMenuValue>{objectInfo.x}</StyledObjectMenuValue>
+                    </StyledObjectMenuRow>
+                    <StyledObjectMenuRow>
+                        <StyledObjectMenuLabel>y</StyledObjectMenuLabel>
+                        <StyledObjectMenuValue>{objectInfo.y}</StyledObjectMenuValue>
+                    </StyledObjectMenuRow>
+                </StyledObjectMenuContainer>
+            </StyledObjectMenuWrapper>
         )
     }, [isVisible, objectInfo]);
 }

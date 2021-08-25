@@ -29,7 +29,7 @@ export const useMenu = () => {
                 lastTimeSpeed: engine.store.settings.targetTimeSpeed,
                 objectsCount: Object.keys(engine.store.nextObjects).length,
             }));
-        }, 333)
+        }, 100)
 
         return () => {
             clearInterval(intervalId)

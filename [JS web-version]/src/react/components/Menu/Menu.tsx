@@ -8,12 +8,11 @@ import {useReactStore} from "../../reducer/hooks";
 
 import {normalizeNumber} from "../../../utils/other";
 import {engine} from "../../../index";
-
-import "./Menu.css";
 import {InputNumber} from "../InputNumber/InputNumber";
+import {StyledMenuContainer, StyledMenuContainerItem, StyledMenuContainerPart, StyledMenuText} from "./Menu.styles";
 
 // todo: re-renders
-function Menu() {
+export const Menu = () => {
     const {
         handleClickPause,
         handleClickWatchMode,
@@ -26,6 +25,7 @@ function Menu() {
         handleClickIsCollide,
         handleInputTargetTimeSpeed
     } = useMenu();
+
     const {
         state: {
             stats: {
@@ -74,29 +74,28 @@ function Menu() {
     }, [engine.store.settings.targetTimeSpeed]);
 
     return (
-        <div className="Menu_container">
-            <div className="Menu_container_part">
-                <div className="Menu_container_item"
-                     onClick={handleClickPause}>
+        <StyledMenuContainer>
+            <StyledMenuContainerPart>
+                <StyledMenuContainerItem onClick={handleClickPause}>
                     {
                         engine.store.settings.isPause ?
                             <Button isActive={engine.store.settings.isPause} icon={<i className="fas fa-play"/>}/> :
                             <Button isActive={engine.store.settings.isPause} icon={<i className="fas fa-pause"/>}/>
                     }
-                    <div className="Menu_text">{currentTimeStr}</div>
-                </div>
+                    <StyledMenuText>{currentTimeStr}</StyledMenuText>
+                </StyledMenuContainerItem>
 
-                <div className="Menu_container_item">
-                    <div className="Menu_text">{currentTimeSpeedStr}/sec</div>
-                    <div className="Menu_text">
+                <StyledMenuContainerItem>
+                    <StyledMenuText>{currentTimeSpeedStr}/sec</StyledMenuText>
+                    <StyledMenuText>
                         <InputNumber value={engine.store.settings.targetTimeSpeed}
                                      onChange={handleInputTargetTimeSpeed}/>
-                    </div>
-                </div>
-            </div>
+                    </StyledMenuText>
+                </StyledMenuContainerItem>
+            </StyledMenuContainerPart>
 
-            <div className="Menu_container_part">
-                <div className="Menu_container_item">
+            <StyledMenuContainerPart>
+                <StyledMenuContainerItem>
                     <Button isActive={isWatch}
                             onClick={handleClickWatchMode}
                             icon={<i className="fas fa-hand-rock"/>}>Move</Button>
@@ -123,11 +122,11 @@ function Menu() {
                     <Button isActive={isCollide}
                             onClick={handleClickIsCollide}
                             icon={<i className="far fa-circle"/>}>Collide</Button>
-                </div>
-            </div>
+                </StyledMenuContainerItem>
+            </StyledMenuContainerPart>
 
-            <div className="Menu_container_part">
-                <div className="Menu_container_item">
+            <StyledMenuContainerPart>
+                <StyledMenuContainerItem>
                     <Button icon={objectsCount}>
                         Objects
                     </Button>
@@ -137,28 +136,8 @@ function Menu() {
                     <Button icon={lastPPS}>
                         PPS
                     </Button>
-                </div>
-            </div>
-
-            {/*<div onClick={() => {*/}
-            {/*    store.canvas.drawForceLines = !store.canvas.drawForceLines*/}
-            {/*}}>*/}
-            {/*    <button>{store.canvas.drawForceLines ? 'hide lines' : 'show lines'}</button>*/}
-            {/*</div>*/}
-
-            {/*<div>Mode: {mode}</div>*/}
-            {/*<div onClick={() => {*/}
-            {/*    store.canvas.mode = 'WATCH'*/}
-            {/*}}>*/}
-            {/*    <button>WATCH</button>*/}
-            {/*</div>*/}
-            {/*<div onClick={() => {*/}
-            {/*    store.canvas.mode = 'ADDITIONAL'*/}
-            {/*}}>*/}
-            {/*    <button>ADDITIONAL</button>*/}
-            {/*</div>*/}
-        </div>
+                </StyledMenuContainerItem>
+            </StyledMenuContainerPart>
+        </StyledMenuContainer>
     );
 }
-
-export default Menu;

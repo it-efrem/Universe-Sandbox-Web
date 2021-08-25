@@ -1,4 +1,6 @@
-.Menu_container {
+import styled from "styled-components";
+
+export const StyledMenuContainer = styled.div`
     position: absolute;
     bottom: 0;
     left: 0;
@@ -10,27 +12,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-}
+`;
 
-.Menu_text {
+export const StyledMenuText = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     min-width: 150px;
-}
+`;
 
-.Menu_container_part {
+export const StyledMenuContainerPart = styled.div`
     display: flex;
-}
+`;
 
-.Menu_container_item {
+export const StyledMenuContainerItem = styled.div`
     display: flex;
-}
-
-.Menu_container_item + .Menu_container_item {
-    margin-left: 1em;
-}
-
-.Menu_container_item > div + div {
-    margin-left: 1em;
-}
+    
+    + .Menu_container_item {
+        margin-left: 1em;
+    }
+    
+    > div + div {
+        margin-left: 1em;
+    }
+`;

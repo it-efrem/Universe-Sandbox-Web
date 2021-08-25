@@ -1,6 +1,5 @@
 import React, {ReactElement} from 'react';
-import cn from "classnames";
-import "./Button.css";
+import {StyledButton, StyledButtonIcon, StyledButtonText} from "./Button.styles";
 
 interface ButtonProps {
     isActive?: boolean;
@@ -10,12 +9,10 @@ interface ButtonProps {
 
 export const Button: React.FC<ButtonProps> = ({isActive, icon, onClick, children}) => {
     return (
-        <div className="Button" onClick={onClick}>
+        <StyledButton onClick={onClick}>
             {icon !== undefined &&
-            <div className={cn("Button_icon", {
-                "Button_active": isActive,
-            })}>{icon}</div>}
-            {children !== undefined && <div className="Button_text">{children}</div>}
-        </div>
+            <StyledButtonIcon isActive={isActive}>{icon}</StyledButtonIcon>}
+            {children !== undefined && <StyledButtonText>{children}</StyledButtonText>}
+        </StyledButton>
     )
 };
