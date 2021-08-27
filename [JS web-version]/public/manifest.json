@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Universe Sandbox 2D Web",
+  "name": "Universe Sandbox 2D Web",
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,7 +11,7 @@
       "src": "logo192.png",
       "type": "image/png",
       "sizes": "192x192"
-    },
+    }
   ],
   "start_url": ".",
   "display": "standalone",
