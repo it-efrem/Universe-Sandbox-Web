@@ -9,10 +9,6 @@ import RobotoWoff2 from './fonts/roboto-regular.woff2';
 // @ts-ignore
 import RobotoTTF from './fonts/roboto-regular.ttf';
 
-import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
-import "@fortawesome/fontawesome-free/css/regular.min.css";
-import "@fortawesome/fontawesome-free/css/solid.min.css";
-
 export const StyleFonts = createGlobalStyle`
     @font-face {
         font-family: "Roboto";

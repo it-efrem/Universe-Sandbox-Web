@@ -11,6 +11,12 @@ import {
     StyledObjectMenuValue,
     StyledObjectMenuWrapper
 } from "./ObjectMenu.styles";
+import {StyledIcon} from "../SvgIcon/SvgIcon";
+import timesCircleSvg from "../../styles/icons/times-circle-solid.svg";
+import weightSvg from "../../styles/icons/weight-hanging-solid.svg";
+import circleNotchSvg from "../../styles/icons/circle-notch-solid.svg";
+import tachometerSvg from "../../styles/icons/tachometer-alt-solid.svg";
+import mapSvg from "../../styles/icons/map-marker-alt-solid.svg";
 
 export const ObjectMenu = () => {
     const {isVisible, objectInfo, handleClickCloseMenu, handleChangeObjectMass} = useObjectMenu();
@@ -27,13 +33,13 @@ export const ObjectMenu = () => {
                         <div>{objectInfo.id}</div>
                         <StyledObjectMenuClose
                             onClick={handleClickCloseMenu}>
-                            <i className="fas fa-times-circle"/>
+                            <StyledIcon src={timesCircleSvg}/>
                         </StyledObjectMenuClose>
                     </StyledObjectMenuTop>
                     <StyledObjectMenuRow>
                         <StyledObjectMenuLabel>
                             <StyledObjectMenuLabelMass>
-                                <i className="fas fa-weight-hanging"/>
+                                <StyledIcon src={weightSvg}/>
                             </StyledObjectMenuLabelMass>
                         </StyledObjectMenuLabel>
                         <StyledObjectMenuValue>
@@ -42,17 +48,19 @@ export const ObjectMenu = () => {
                         </StyledObjectMenuValue>
                     </StyledObjectMenuRow>
                     <StyledObjectMenuRow>
-                        <StyledObjectMenuLabel><i className="fas fa-circle-notch"/></StyledObjectMenuLabel>
+                        <StyledObjectMenuLabel><StyledIcon src={circleNotchSvg}/></StyledObjectMenuLabel>
                         <StyledObjectMenuValue>{objectInfo.radius}</StyledObjectMenuValue>
                     </StyledObjectMenuRow>
                     <StyledObjectMenuRow>
-                        <StyledObjectMenuLabel><i className="fas fa-tachometer-alt"/></StyledObjectMenuLabel>
+                        <StyledObjectMenuLabel><StyledIcon src={tachometerSvg}/></StyledObjectMenuLabel>
                         <StyledObjectMenuValue>{objectInfo.speed}</StyledObjectMenuValue>
                     </StyledObjectMenuRow>
                     <StyledObjectMenuRow>
                         <StyledObjectMenuLabel>
-                            <i className="fas fa-map-marked-alt"/>
-                            Coordinates
+                            <StyledObjectMenuLabel>
+                                <StyledIcon src={mapSvg}/>
+                            </StyledObjectMenuLabel>
+                            <StyledObjectMenuValue>Coordinates</StyledObjectMenuValue>
                         </StyledObjectMenuLabel>
                     </StyledObjectMenuRow>
                     <StyledObjectMenuRow>

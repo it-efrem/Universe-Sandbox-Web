@@ -10,6 +10,17 @@ import {normalizeNumber} from "../../../utils/other";
 import {engine} from "../../../index";
 import {InputNumber} from "../InputNumber/InputNumber";
 import {StyledMenuContainer, StyledMenuContainerItem, StyledMenuContainerPart, StyledMenuText} from "./Menu.styles";
+import {StyledIcon} from "../SvgIcon/SvgIcon";
+import playSvg from "../../styles/icons/play-solid.svg";
+import pauseSvg from "../../styles/icons/pause-solid.svg";
+import moveSvg from "../../styles/icons/hand-rock-solid.svg";
+import plusSvg from "../../styles/icons/plus-solid.svg";
+import borderSvg from "../../styles/icons/border-all-solid.svg";
+import tagsSvg from "../../styles/icons/tags-solid.svg";
+import arrowLeftSvg from "../../styles/icons/long-arrow-alt-left-solid.svg";
+import waterSvg from "../../styles/icons/water-solid.svg";
+import shapedSvg from "../../styles/icons/shapes-solid.svg";
+import circleSvg from "../../styles/icons/circle-solid.svg";
 
 // todo: re-renders
 export const Menu = () => {
@@ -79,8 +90,8 @@ export const Menu = () => {
                 <StyledMenuContainerItem onClick={handleClickPause}>
                     {
                         engine.store.settings.isPause ?
-                            <Button isActive={engine.store.settings.isPause} icon={<i className="fas fa-play"/>}/> :
-                            <Button isActive={engine.store.settings.isPause} icon={<i className="fas fa-pause"/>}/>
+                            <Button isActive={engine.store.settings.isPause} icon={<StyledIcon src={playSvg}/>}/> :
+                            <Button isActive={engine.store.settings.isPause} icon={<StyledIcon src={pauseSvg}/>}/>
                     }
                     <StyledMenuText>{currentTimeStr}</StyledMenuText>
                 </StyledMenuContainerItem>
@@ -98,30 +109,30 @@ export const Menu = () => {
                 <StyledMenuContainerItem>
                     <Button isActive={isWatch}
                             onClick={handleClickWatchMode}
-                            icon={<i className="fas fa-hand-rock"/>}>Move</Button>
+                            icon={<StyledIcon src={moveSvg}/>}>Move</Button>
                     <Button isActive={isAdditional}
                             onClick={handleClickAdditionalMode}
-                            icon={<i className="fas fa-plus"/>}>
+                            icon={<StyledIcon src={plusSvg}/>}>
                         Add obj.
                     </Button>
                     <Button isActive={isGrid}
                             onClick={handleClickIsGrid}
-                            icon={<i className="fas fa-border-all"/>}>Grid</Button>
+                            icon={<StyledIcon src={borderSvg}/>}>Grid</Button>
                     <Button isActive={isLabels}
                             onClick={handleClickIsLabels}
-                            icon={<i className="fas fa-tags"/>}>Labels</Button>
+                            icon={<StyledIcon src={tagsSvg}/>}>Labels</Button>
                     <Button isActive={isForceLines}
                             onClick={handleClickIsForces}
-                            icon={<i className="fas fa-long-arrow-alt-left"/>}>Forces</Button>
+                            icon={<StyledIcon src={arrowLeftSvg}/>}>Forces</Button>
                     <Button isActive={isTidalForces}
                             onClick={handleClickIsTridals}
-                            icon={<i className="fas fa-water"/>}>Tidals</Button>
+                            icon={<StyledIcon src={waterSvg}/>}>Tidals</Button>
                     <Button isActive={isFragments}
                             onClick={handleClickIsFragments}
-                            icon={<i className="fas fa-shapes"/>}>Fragments</Button>
+                            icon={<StyledIcon src={shapedSvg}/>}>Fragments</Button>
                     <Button isActive={isCollide}
                             onClick={handleClickIsCollide}
-                            icon={<i className="far fa-circle"/>}>Collide</Button>
+                            icon={<StyledIcon src={circleSvg}/>}>Collide</Button>
                 </StyledMenuContainerItem>
             </StyledMenuContainerPart>
 
