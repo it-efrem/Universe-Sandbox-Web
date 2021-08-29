@@ -3,6 +3,8 @@ set -ex # e - exit on error, x - print command before execution
 
 echo "git-update"
 
+git clean -f
+git checkout master
 git fetch --all
 git reset --hard origin/master
 git pull

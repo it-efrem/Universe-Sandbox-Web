@@ -1,5 +1,4 @@
 import React from "react";
-import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import {Menu} from "../Menu/Menu";
 import {LabelGitHub} from "../LabelGitHub/LabelGitHub";
