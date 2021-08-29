@@ -10,22 +10,22 @@ import RobotoWoff2 from './fonts/roboto-regular.woff2';
 import RobotoTTF from './fonts/roboto-regular.ttf';
 
 // @ts-ignore
-import FontAwesomeRegularEOT from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.eot';
+import FontAwesomeRegularEOT from './fonts/fa-regular-400.eot';
 // @ts-ignore
-import FontAwesomeRegularWoff2 from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2';
+import FontAwesomeRegularWoff2 from './fonts/fa-regular-400.woff2';
 // @ts-ignore
-import FontAwesomeRegularWoff from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff';
+import FontAwesomeRegularWoff from './fonts/fa-regular-400.woff';
 // @ts-ignore
-import FontAwesomeRegularTTF from '@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf';
+import FontAwesomeRegularTTF from './fonts/fa-regular-400.ttf';
 
 // @ts-ignore
-import FontAwesomeSolidEOT from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.eot';
+import FontAwesomeSolidEOT from './fonts/fa-solid-900.eot';
 // @ts-ignore
-import FontAwesomeSolidWoff2 from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2';
+import FontAwesomeSolidWoff2 from './fonts/fa-solid-900.woff2';
 // @ts-ignore
-import FontAwesomeSolidWoff from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff';
+import FontAwesomeSolidWoff from './fonts/fa-solid-900.woff';
 // @ts-ignore
-import FontAwesomeSolidTTF from '@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf';
+import FontAwesomeSolidTTF from './fonts/fa-solid-900.ttf';
 
 import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
 import "@fortawesome/fontawesome-free/css/regular.min.css";
