@@ -4,7 +4,6 @@ import {
     StyledInputNumberContainer,
     StyledInputNumberInput
 } from "../InputNumber/InputNumber.styles";
-import {StyledIcon} from "../SvgIcon/SvgIcon";
 
 export const StyledObjectMenuWrapper = styled.div`
     position: absolute;
@@ -51,14 +50,11 @@ export const StyledObjectMenuRow = styled.div`
 `;
 
 export const StyledObjectMenuLabel = styled.div`
-    display: flex;
-    flex-direction: row;
     min-width: 24px;
     font-size: 12px;
     
-    ${StyledIcon} {
-        width: 12px;
-        height: 12px;
+    i {
+        min-width: 24px;
     }
 `;
 
