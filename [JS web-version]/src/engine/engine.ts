@@ -3,9 +3,8 @@ import {detectCanvasCollision, detectUniverseCollision, getVectorLength} from ".
 import {moveByVector} from "./tools/tools";
 import {EngineListenerType, EngineStoreType, VIEW_MODE} from "./types";
 import {drawGrid} from "./draw/drawGrid";
-import {GravityObject} from "../game/gravityObject/GravityObject";
-import {GravityObjectComposition} from "../game/gravityObject/GravityObject.types";
 import {DrawObject} from "../game/drawObject/DrawObject";
+import {SolarSystemSample} from "../game/samples/solar-system";
 
 export class Engine {
     public canvas: HTMLCanvasElement | null;
@@ -50,7 +49,7 @@ export class Engine {
                 viewMode: VIEW_MODE.WATCH as VIEW_MODE,
 
                 // todo: учитывать фактическое максимальное время
-                targetTimeSpeed: 100,
+                targetTimeSpeed: 200000,
                 isPause: false,
 
                 isLabels: true,
@@ -78,7 +77,7 @@ export class Engine {
                 lastY: 0,
                 clickX: 0,
                 clickY: 0,
-                scale: 1000,
+                scale: 900000,
                 isMouseDown: false,
 
                 gridCount: 10,
@@ -86,58 +85,7 @@ export class Engine {
             },
             activeObjectId: undefined,
             creationObjectId: undefined,
-            nextObjects: {
-                'Earth': new GravityObject({
-                    coordinates: {
-                        x: 0,
-                        y: 0,
-                    },
-                    vectorMove: {
-                        x: 0,
-                        y: 0,
-                    },
-                    composition: {
-                        [GravityObjectComposition.HYDROGEN]: 1000,
-                        [GravityObjectComposition.WATER]: 400,
-                        [GravityObjectComposition.SILICATES]: 1900,
-                        [GravityObjectComposition.IRON]: 3300,
-                    },
-                    coreForm: [
-                        [0, 0.5, 0.0074, 0.1334144980975718, 0.1836018940949956, -0.003414005423899663, 0.5, 0],
-                        [0.5, 0, 0.76, 0.057751056329688855, 0.9792271080736776, 0.20371166658036471, 1, 0.5],
-                        [1, 0.5, 0.90, 0.8462534407025388, 0.7864295848560977, 1.0231384695889916, 0.5, 1],
-                        [0.5, 1, 0.27, 0.9344921699998242, -0.07970099568524663, 0.819831340978712, 0, 0.5]
-                    ],
-                    rotationVector: 1,
-                    rotationCurrent: 0,
-                    isSimulated: true
-                }),
-                'Moon': new GravityObject({
-                    coordinates: {
-                        x: -406000,
-                        y: 0,
-                    },
-                    vectorMove: {
-                        x: 0,
-                        y: 1.02,
-                    },
-                    composition: {
-                        [GravityObjectComposition.HYDROGEN]: 0.6,
-                        [GravityObjectComposition.WATER]: 0.6,
-                        [GravityObjectComposition.SILICATES]: 50,
-                        [GravityObjectComposition.IRON]: 30,
-                    },
-                    coreForm: [
-                        [0, 0.5, -0.04, 0.30822663293720176, 0.22379906173795241, -0.08517939087081042, 0.5, 0],
-                        [0.5, 0, 0.85, -0.05128102798883854, 0.9008649790048294, 0.13200509519353526, 1, 0.5],
-                        [1, 0.5, 1.09, 0.8492906411283264, 0.6863508784941157, 0.9785806585121479, 0.5, 1],
-                        [0.5, 1, 0.15, 1.0355947249254778, 0.0027087956008774172, 0.7015958406554407, 0, 0.5]
-                    ],
-                    rotationVector: 1,
-                    rotationCurrent: 0,
-                    isSimulated: true
-                })
-            },
+            nextObjects: SolarSystemSample,
             lastObjects: {},
         }
     }
