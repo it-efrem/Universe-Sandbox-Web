@@ -1,6 +1,6 @@
 {
   "name": "js-gravity-simulation",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "it-efrem",
   "private": true,
   "dependencies": {
