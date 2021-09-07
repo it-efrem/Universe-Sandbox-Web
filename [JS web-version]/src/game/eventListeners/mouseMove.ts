@@ -7,9 +7,11 @@ export const mouseMoveEventListener = (e: MouseEvent) => {
 
     switch (engine.store.settings.viewMode) {
         case VIEW_MODE.WATCH: {
-            if (e.which === 1 && engine.store.canvas.isMouseDown) {
-                engine.store.canvas.offsetX = engine.store.canvas.lastX + ((engine.store.canvas.clickX - e.x) * engine.store.canvas.scale);
-                engine.store.canvas.offsetY = engine.store.canvas.lastY + ((engine.store.canvas.clickY - e.y) * engine.store.canvas.scale);
+            if (e.which === 1 && !engine.store.settings.isFollowTheObject && engine.store.canvas.isMouseDown) {
+                engine.store.canvas.offsetX =
+                    engine.store.canvas.lastX + ((engine.store.canvas.clickX - e.x) * engine.store.canvas.scale);
+                engine.store.canvas.offsetY =
+                    engine.store.canvas.lastY + ((engine.store.canvas.clickY - e.y) * engine.store.canvas.scale);
             }
 
             break;

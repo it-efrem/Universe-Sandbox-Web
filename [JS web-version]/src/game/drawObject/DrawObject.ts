@@ -63,15 +63,8 @@ export class DrawObject {
         this.ctx.save();
         this.ctx.strokeStyle = DrawObjectStyles.forceLines.strokeStyle;
 
-        const lineToX = (this.canvasCoordinates.x +
-            this.object.vectorMove.x *
-            this.store.canvas.vectorsScale /
-            this.store.canvas.scale);
-
-        const lineToY = (this.canvasCoordinates.y +
-            this.object.vectorMove.y *
-            this.store.canvas.vectorsScale /
-            this.store.canvas.scale);
+        const lineToX = (this.canvasCoordinates.x + this.object.vectorMove.x * this.store.vectorScaleFactor / this.store.canvas.scale);
+        const lineToY = (this.canvasCoordinates.y + this.object.vectorMove.y * this.store.vectorScaleFactor / this.store.canvas.scale);
 
         const line = new Path2D();
         line.moveTo(this.canvasCoordinates.x, this.canvasCoordinates.y);

@@ -10,6 +10,7 @@ export const createObjectToUniverseByCanvasClick = (x_canvas: number, y_canvas: 
 
     engine.store.creationObjectId = objectName;
     engine.store.activeObjectId = objectName;
+    engine.store.settings.isFollowTheObject = false;
 
     engine.store.nextObjects[objectName] = new GravityObject({
         coordinates: {

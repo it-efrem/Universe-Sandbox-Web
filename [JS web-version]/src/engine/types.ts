@@ -26,6 +26,8 @@ export type EngineStoreType = {
         isCollide: boolean,
         isFragments: boolean,
         isTidalForces: boolean,
+
+        isFollowTheObject: boolean,
     },
     canvas: {
         width: number,
@@ -48,8 +50,8 @@ export type EngineStoreType = {
         isMouseDown: boolean,
 
         gridCount: number,
-        vectorsScale: number,
     },
+    vectorScaleFactor: number,
     activeObjectId: string | undefined,
     creationObjectId: string | undefined,
     nextObjects: GravityObjectByNameType,

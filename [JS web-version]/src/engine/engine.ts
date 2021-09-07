@@ -5,6 +5,7 @@ import {EngineListenerType, EngineStoreType, VIEW_MODE} from "./types";
 import {drawGrid} from "./draw/drawGrid";
 import {DrawObject} from "../game/drawObject/DrawObject";
 import {SolarSystemSample} from "../game/samples/solar-system";
+import {engine} from "../index";
 
 export class Engine {
     public canvas: HTMLCanvasElement | null;
@@ -49,7 +50,7 @@ export class Engine {
                 viewMode: VIEW_MODE.WATCH as VIEW_MODE,
 
                 // todo: учитывать фактическое максимальное время
-                targetTimeSpeed: 200000,
+                targetTimeSpeed: 1000000,
                 isPause: false,
 
                 isLabels: true,
@@ -59,6 +60,8 @@ export class Engine {
                 isCollide: true,
                 isFragments: true,
                 isTidalForces: true,
+
+                isFollowTheObject: false,
             },
             canvas: {
                 width: 0,
@@ -81,8 +84,8 @@ export class Engine {
                 isMouseDown: false,
 
                 gridCount: 10,
-                vectorsScale: 100,
             },
+            vectorScaleFactor: 100,
             activeObjectId: undefined,
             creationObjectId: undefined,
             nextObjects: SolarSystemSample,
@@ -162,6 +165,12 @@ export class Engine {
                 drawGrid(this.store, this.ctx, 10);
             }
 
+            const activeObject = this.store.nextObjects[engine.store.activeObjectId || ''];
+            if (this.store.settings.isFollowTheObject && activeObject) {
+                this.store.canvas.offsetX = activeObject.coordinates.x;
+                this.store.canvas.offsetY = activeObject.coordinates.y;
+            }
+
             Object.entries(this.store.nextObjects)
                 .forEach(([objectId, nextObject]) => {
                     const lastObject = this.store.lastObjects[objectId];
@@ -193,9 +202,10 @@ export class Engine {
         }
 
         if (!this.isStopped) {
-            // todo: or use RAF?
             const coefficient = Math.max(1, this.store.settings.targetFPS / this.store.stats.lastFPS);
             const timeout = 1000 / this.store.settings.targetFPS / coefficient;
+
+            // todo: or use RAF?
             setTimeout(this.draw.bind(this), timeout)
         }
     }
@@ -296,13 +306,17 @@ export class Engine {
                                 this.store.canvas.scale +
                                 this.store.canvas.offsetY;
 
-                            if (detectCanvasCollision(universe_x,
+                            if (detectCanvasCollision(
+                                universe_x,
                                 universe_y,
-                                1,
+                                20 * this.store.canvas.scale,
                                 object.coordinates.x,
                                 object.coordinates.y,
                                 object.radius.atmosphere)) {
                                 this.store.activeObjectId = id;
+                                if (!this.store.creationObjectId) {
+                                    this.store.settings.isFollowTheObject = true;
+                                }
                             }
                         }
 

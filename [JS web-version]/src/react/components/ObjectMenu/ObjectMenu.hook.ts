@@ -56,6 +56,7 @@ export const useObjectMenu = () => {
 
     const handleClickCloseMenu = () => {
         engine.store.activeObjectId = undefined;
+        engine.store.settings.isFollowTheObject = false;
     }
 
     const isVisible = Boolean(objectInfo);
