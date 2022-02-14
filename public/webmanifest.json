@@ -1,0 +1,19 @@
+{
+  "name": "Universe Sandbox Web",
+  "short_name": "",
+  "description": "",
+  "scope": "",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#e30611",
+  "background_color": "#fff",
+  "dir": "auto",
+  "lang": "en-EN",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64"
+    }
+  ]
+}
