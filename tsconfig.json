@@ -19,7 +19,7 @@
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -30,7 +30,7 @@
     "incremental": true
   },
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
     "node_modules"

@@ -1,19 +1,53 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { faWrench } from "@fortawesome/free-solid-svg-icons";
-import {
-  StyledApp,
-  StyledAppDate,
-  StyledAppSubTitle,
-  StyledAppTitle,
-} from "./App.styles";
+import { StyledApp, StyledCanvas } from "src/components/App/App.styles";
+import { UEngine } from "src/UEngine";
 
-export const App: React.FC = () => (
-  <StyledApp>
-    <StyledAppTitle>
-      Universe Sandbox Web <FontAwesomeIcon icon={faWrench} />
-    </StyledAppTitle>
-    <StyledAppSubTitle>coming soon...</StyledAppSubTitle>
-    <StyledAppDate>(march 2022)</StyledAppDate>
-  </StyledApp>
-);
+// todo UEngine:
+//  - move: WASD + arrows + space + ctrl
+//  - object adding/removing
+//  - gravity
+//  - git object - raycast
+//  - click object adding
+//  - click object adding (set vector + size)
+//  - planet textures
+//  - sun light
+//  - change names to "free" and "3"
+//  - scale line
+
+// todo UI:
+//  - Game menu
+//   - pause
+//   - object info by click
+//   - object change properties
+//   - simulation speed target/current
+//   - view grid
+//   - view labels
+//   - view vectors + tracks
+//  - General menu screen
+//   - settings
+//   - new simulation
+//   - chose simulation
+
+export const App: React.FC = () => {
+  const engine = React.useRef<UEngine>();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    if (canvasRef?.current) {
+      const isWebGLAvailable = UEngine.checkWebGLAvailable();
+
+      if (isWebGLAvailable) {
+        engine.current = new UEngine(canvasRef.current);
+        engine.current.start();
+      } else {
+        // todo: render error
+      }
+    }
+  }, [canvasRef]);
+
+  return (
+    <StyledApp>
+      <StyledCanvas ref={canvasRef} />
+    </StyledApp>
+  );
+};

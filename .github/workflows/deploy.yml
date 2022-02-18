@@ -1,24 +1,24 @@
-name: Deploy
-
-on:
-  push:
-    branches:
-      - master
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      - run: |
-          bash ./config/ci/git-version-tag.sh
-          bash ./config/ci/deploy.prod.sh
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - run: aws s3 sync ./out ${{ secrets.AWS_S3_BUCKET }}
+#name: Deploy
+#
+#on:
+#  push:
+#    branches:
+#      - master
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: 14
+#      - run: |
+#          bash ./config/ci/git-version-tag.sh
+#          bash ./config/ci/deploy.prod.sh
+#      - uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#      - run: aws s3 sync ./out ${{ secrets.AWS_S3_BUCKET }}
