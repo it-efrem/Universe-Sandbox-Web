@@ -85,6 +85,12 @@ export class OrbitControls extends Three.EventDispatcher {
     // The four arrow keys
 
     this.keys = {
+      Q: "KeyQ",
+      E: "KeyE",
+      W: "KeyW",
+      A: "KeyA",
+      S: "KeyS",
+      D: "KeyD",
       LEFT: "ArrowLeft",
       UP: "ArrowUp",
       RIGHT: "ArrowRight",
@@ -319,6 +325,16 @@ export class OrbitControls extends Three.EventDispatcher {
       };
     })();
 
+    const panForward = (function () {
+      const v = new Three.Vector3();
+      return function panForward(distance, objectMatrix) {
+        v.setFromMatrixColumn(objectMatrix, 2);
+
+        v.multiplyScalar(-distance);
+        panOffset.add(v);
+      };
+    })();
+
     const panUp = (function () {
       const v = new Three.Vector3();
       return function panUp(distance, objectMatrix) {
@@ -336,7 +352,7 @@ export class OrbitControls extends Three.EventDispatcher {
 
     const pan = (function () {
       const offset = new Three.Vector3();
-      return function pan(deltaX, deltaY) {
+      return function pan(deltaX, deltaY, deltaZ) {
         const element = scope.domElement;
 
         if (scope.object.isPerspectiveCamera) {
@@ -351,6 +367,10 @@ export class OrbitControls extends Three.EventDispatcher {
 
           panLeft(
             (2 * deltaX * targetDistance) / element.clientHeight,
+            scope.object.matrix
+          );
+          panForward(
+            (2 * deltaZ * targetDistance) / element.clientHeight,
             scope.object.matrix
           );
           panUp(
@@ -484,28 +504,31 @@ export class OrbitControls extends Three.EventDispatcher {
       scope.update();
     }
 
-    // todo: smooth move
     function handleKeyDown(event) {
       let needsUpdate = false;
 
       switch (event.code) {
+        case scope.keys.W:
         case scope.keys.UP:
-          pan(0, scope.keyPanSpeed);
+          pan(0, 0, scope.keyPanSpeed);
           needsUpdate = true;
           break;
 
+        case scope.keys.S:
         case scope.keys.BOTTOM:
-          pan(0, -scope.keyPanSpeed);
+          pan(0, 0, -scope.keyPanSpeed);
           needsUpdate = true;
           break;
 
+        case scope.keys.A:
         case scope.keys.LEFT:
-          pan(scope.keyPanSpeed, 0);
+          pan(scope.keyPanSpeed, 0, 0);
           needsUpdate = true;
           break;
 
+        case scope.keys.D:
         case scope.keys.RIGHT:
-          pan(-scope.keyPanSpeed, 0);
+          pan(-scope.keyPanSpeed, 0, 0);
           needsUpdate = true;
           break;
       }

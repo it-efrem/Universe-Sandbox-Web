@@ -3,7 +3,6 @@ import { StyledApp, StyledCanvas } from "src/components/App/App.styles";
 import { UEngine } from "src/UEngine";
 
 // todo UEngine:
-//  - move: WASD + arrows + space + ctrl
 //  - object adding/removing
 //  - gravity
 //  - git object - raycast
@@ -13,6 +12,10 @@ import { UEngine } from "src/UEngine";
 //  - sun light
 //  - change names to "free" and "3"
 //  - scale line
+//  - Controls:
+//    - smooth move
+//    - speed move by scale
+//    - Q + E
 
 // todo UI:
 //  - Game menu
