@@ -15,7 +15,7 @@ export class Settings extends Scene {
     this.skybox = new Skybox(this.scene, this.controls);
 
     // todo: move to ui
-    this.grid.show();
+    // this.grid.show();
     this.skybox.show();
   }
 }

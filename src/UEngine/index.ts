@@ -1,6 +1,8 @@
 import { Store } from "src/UEngine/store";
 import { OrbitControls } from "src/UEngine/utils/OrbitControls";
 import * as Three from "three";
+import { Moon } from "./collections/moons/Moon";
+import { Earth } from "./collections/planets/Earth";
 import { Settings } from "./settings";
 
 export class UEngine {
@@ -37,14 +39,25 @@ export class UEngine {
     );
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.listenToKeyEvents(document.body);
-    this.camera.position.set(50, 50, 300);
+    this.camera.position.set(35000, 35000, 35000);
 
     this.renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     window.addEventListener("resize", this.canvasResize.bind(this));
 
-    this.store = new Store();
+    this.store = new Store(this.scene);
     this.settings = new Settings(this.scene, this.controls);
+
+    // todo: move
+    const light = new Three.DirectionalLight(0xffffff, 1);
+    light.position.set(1000000, 0, 0);
+    light.castShadow = true;
+
+    this.scene.add(light);
+
+    // todo: remove demo
+    this.store.objects.add(new Earth(new Three.Vector3(0, 0, 0)));
+    this.store.objects.add(new Moon(new Three.Vector3(30000, 0, 0)));
 
     // todo: if dev
     if (typeof window.__THREE_DEVTOOLS__ !== "undefined") {

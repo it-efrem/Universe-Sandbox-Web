@@ -1,9 +1,9 @@
-import nx from "src/UEngine/files/images/nx.jpg";
-import ny from "src/UEngine/files/images/ny.jpg";
-import nz from "src/UEngine/files/images/nz.jpg";
-import px from "src/UEngine/files/images/px.jpg";
-import py from "src/UEngine/files/images/py.jpg";
-import pz from "src/UEngine/files/images/pz.jpg";
+import nx from "src/UEngine/files/textures/skybox/nx.jpg";
+import ny from "src/UEngine/files/textures/skybox/ny.jpg";
+import nz from "src/UEngine/files/textures/skybox/nz.jpg";
+import px from "src/UEngine/files/textures/skybox/px.jpg";
+import py from "src/UEngine/files/textures/skybox/py.jpg";
+import pz from "src/UEngine/files/textures/skybox/pz.jpg";
 import * as Three from "three";
 import { OrbitControls } from "../utils/OrbitControls";
 import { Scene } from "./scene";
