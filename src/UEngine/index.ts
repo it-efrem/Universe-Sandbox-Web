@@ -3,13 +3,17 @@ import { OrbitControls } from "src/UEngine/utils/OrbitControls";
 import * as Three from "three";
 import { Moon } from "./collections/moons/Moon";
 import { Earth } from "./collections/planets/Earth";
+import { Physics } from "./physics";
 import { Settings } from "./settings";
+import { Raycast } from "./utils/raycast";
 
 export class UEngine {
   private readonly renderer: Three.WebGLRenderer;
+  private readonly raycast: Raycast;
   private readonly scene: Three.Scene;
   private readonly camera: Three.PerspectiveCamera;
   private readonly controls: OrbitControls;
+  private readonly physics: Physics;
   private readonly store: Store;
   private readonly settings: Settings;
 
@@ -47,17 +51,32 @@ export class UEngine {
 
     this.store = new Store(this.scene);
     this.settings = new Settings(this.scene, this.controls);
+    this.raycast = new Raycast(
+      this.scene,
+      this.camera,
+      this.renderer.domElement
+    );
+    this.physics = new Physics(this.store);
 
     // todo: move
-    const light = new Three.DirectionalLight(0xffffff, 1);
-    light.position.set(1000000, 0, 0);
+    const light = new Three.PointLight(0xffffff, 1, 1000000);
+    light.position.set(50000, 0, 0);
     light.castShadow = true;
 
     this.scene.add(light);
 
     // todo: remove demo
-    this.store.objects.add(new Earth(new Three.Vector3(0, 0, 0)));
-    this.store.objects.add(new Moon(new Three.Vector3(30000, 0, 0)));
+    this.store.objects.add(
+      new Earth(new Three.Vector3(-20000, 0, 0), new Three.Vector3(0, 0, -11))
+    );
+    this.store.objects.add(
+      new Earth(new Three.Vector3(20000, 0, 0), new Three.Vector3(0, 0, 11))
+    );
+
+    // this.store.objects.add(new Earth(new Three.Vector3(0, 0, 0)));
+    // this.store.objects.add(
+    //   new Moon(new Three.Vector3(362600, 0, 0), new Three.Vector3(0, 0, -0.923))
+    // );
 
     // todo: if dev
     if (typeof window.__THREE_DEVTOOLS__ !== "undefined") {
@@ -96,15 +115,16 @@ export class UEngine {
   }
 
   private render() {
-    if (!this.store.isStarted) {
-      return;
-    }
-
     this.controls.update();
-    this.settings.grid.render();
-
     this.renderer.render(this.scene, this.camera);
+    this.settings.grid.render();
+    this.raycast.getObjects();
+
     requestAnimationFrame(this.render.bind(this));
+
+    if (this.store.isStarted) {
+      this.physics.tick();
+    }
   }
 }
 

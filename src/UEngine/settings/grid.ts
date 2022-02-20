@@ -2,6 +2,7 @@ import * as Three from "three";
 import { OrbitControls } from "../utils/OrbitControls";
 import { Scene } from "./scene";
 
+// todo: fix, camera distance
 export class Grid extends Scene {
   private smallGrid?: Three.GridHelper;
   private bigGrid?: Three.GridHelper;

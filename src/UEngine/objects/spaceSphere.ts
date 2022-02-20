@@ -24,6 +24,7 @@ export class SpaceSphereTextures {
 }
 
 export type SpaceSphereType = {
+  /* Kilometers */
   radius: number;
   rotationSpeed?: number;
   textures: SpaceSphereTextures;
