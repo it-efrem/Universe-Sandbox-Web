@@ -1,5 +1,6 @@
+import * as Three from "three";
 import { Store } from "../store";
-import { getVectorLength, moveByVector } from "../utils/physics";
+import { moveByVector } from "../utils/physics";
 
 export class Physics {
   private readonly store: Store;
@@ -28,17 +29,10 @@ export class Physics {
           objectA.mass &&
           objectB.mass
         ) {
-          const x_pos = Math.abs(
-            objectA.body.position.x - objectB.body.position.x
-          );
-          const y_pos = Math.abs(
-            objectA.body.position.y - objectB.body.position.y
-          );
-          const z_pos = Math.abs(
-            objectA.body.position.z - objectB.body.position.z
-          );
-
-          const totalDistance = getVectorLength(x_pos, y_pos, z_pos);
+          const totalDistance = new Three.Vector3()
+            .add(objectA.body.position)
+            .sub(objectB.body.position)
+            .length();
 
           const [a_x_vector, b_x_vector] = moveByVector(
             gravityConst,

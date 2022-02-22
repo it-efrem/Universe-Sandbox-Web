@@ -16,7 +16,7 @@ export class Settings extends Scene {
 
     // todo: move to ui
     // todo: fix it
-    // this.grid.show();
+    this.grid.show();
     this.skybox.show();
   }
 }

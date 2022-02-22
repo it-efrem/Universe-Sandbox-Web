@@ -1,10 +1,10 @@
 import { Store } from "src/UEngine/store";
 import { OrbitControls } from "src/UEngine/utils/OrbitControls";
 import * as Three from "three";
-import { Moon } from "./collections/moons/Moon";
 import { Earth } from "./collections/planets/Earth";
 import { Physics } from "./physics";
 import { Settings } from "./settings";
+import { UI } from "./ui";
 import { Raycast } from "./utils/raycast";
 
 export class UEngine {
@@ -16,6 +16,7 @@ export class UEngine {
   private readonly physics: Physics;
   private readonly store: Store;
   private readonly settings: Settings;
+  private readonly ui: UI;
 
   public static checkWebGLAvailable() {
     try {
@@ -43,7 +44,8 @@ export class UEngine {
     );
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.listenToKeyEvents(document.body);
-    this.camera.position.set(35000, 35000, 35000);
+    // this.camera.position.set(35000, 35000, 35000);
+    this.camera.position.set(0.5, 0.2, 0.5);
 
     this.renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -57,6 +59,7 @@ export class UEngine {
       this.renderer.domElement
     );
     this.physics = new Physics(this.store);
+    this.ui = new UI();
 
     // todo: move
     const light = new Three.PointLight(0xffffff, 1, 1000000);

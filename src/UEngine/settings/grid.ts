@@ -1,3 +1,4 @@
+import throttle from "lodash/throttle";
 import * as Three from "three";
 import { OrbitControls } from "../utils/OrbitControls";
 import { Scene } from "./scene";
@@ -7,7 +8,6 @@ export class Grid extends Scene {
   private smallGrid?: Three.GridHelper;
   private bigGrid?: Three.GridHelper;
   private isVisible = false;
-  private lastScale = 0;
 
   public colorSmallGrid = 130;
   public colorBigGrid = 130;
@@ -17,10 +17,16 @@ export class Grid extends Scene {
   }
 
   private createGrid() {
-    const scaleFactor = Math.log10(this.lastScale);
-    const sizeFactor = 1 + Math.ceil(scaleFactor);
-    const opacity = 1 - (Math.abs(scaleFactor) % 1);
-    const size = 1000 * Math.pow(10, sizeFactor);
+    // todo: position from focus object
+    const cameraVectorLength = Math.max(
+      1,
+      this.controls.camera.position.length()
+    );
+    const vectorLengthFactor = Math.log10(cameraVectorLength);
+
+    const sizeFactor = 1 + Math.ceil(vectorLengthFactor);
+    const opacity = 1 - (Math.abs(vectorLengthFactor) % 1);
+    const size = 10 * Math.pow(10, sizeFactor);
 
     const smallGridColor = Math.round(this.colorSmallGrid * opacity);
     const smallGridColorStr = `rgb(${smallGridColor},${smallGridColor},${smallGridColor})`;
@@ -69,14 +75,14 @@ export class Grid extends Scene {
     }
   }
 
-  public render() {
-    if (this.lastScale != this.controls.zoomCurrent) {
-      this.lastScale = this.controls.zoomCurrent;
+  public render = throttle(() => {
+    this.controls.target = this.scene.children[1].position;
+    // todo: from object radius
+    this.controls.minDistance = 10000;
 
-      if (this.isVisible) {
-        this.removeGrid();
-        this.createGrid();
-      }
+    if (this.isVisible) {
+      this.removeGrid();
+      this.createGrid();
     }
-  }
+  }, 300);
 }

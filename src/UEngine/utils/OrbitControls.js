@@ -31,7 +31,7 @@ export class OrbitControls extends Three.EventDispatcher {
       console.error(
         'Three.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.'
       );
-    this.object = object;
+    this.camera = object;
     this.domElement = domElement;
     this.domElement.style.touchAction = "none"; // disable touch scroll
     // Set to false to disable this control
@@ -39,6 +39,7 @@ export class OrbitControls extends Three.EventDispatcher {
     this.enabled = true; // "target" sets the location of focus, where the object orbits around
 
     this.target = new Three.Vector3(); // How far you can dolly in and out ( PerspectiveCamera only )
+    this.applySphericalOffset = false;
 
     this.minDistance = 0;
     this.maxDistance = Infinity; // How far you can zoom in and out ( OrthographicCamera only )
@@ -59,7 +60,7 @@ export class OrbitControls extends Three.EventDispatcher {
     // Set to true to enable damping (inertia)
     // If damping is enabled, you must call controls.update() in your animation loop
 
-    this.enableDamping = false;
+    this.enableDamping = true;
     this.dampingFactor = 0.05; // This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
     // Set to false to disable zooming
 
@@ -109,8 +110,8 @@ export class OrbitControls extends Three.EventDispatcher {
     }; // for reset
 
     this.target0 = this.target.clone();
-    this.position0 = this.object.position.clone();
-    this.zoom0 = this.object.zoom; // the target DOM element for key events
+    this.position0 = this.camera.position.clone();
+    this.zoom0 = this.camera.zoom; // the target DOM element for key events
 
     this._domElementKeyEvents = null; //
     // public methods
@@ -125,7 +126,7 @@ export class OrbitControls extends Three.EventDispatcher {
     };
 
     this.getDistance = function () {
-      return this.object.position.distanceTo(this.target);
+      return this.camera.position.distanceTo(this.target);
     };
 
     this.listenToKeyEvents = function (domElement) {
@@ -135,15 +136,15 @@ export class OrbitControls extends Three.EventDispatcher {
 
     this.saveState = function () {
       scope.target0.copy(scope.target);
-      scope.position0.copy(scope.object.position);
-      scope.zoom0 = scope.object.zoom;
+      scope.position0.copy(scope.camera.position);
+      scope.zoom0 = scope.camera.zoom;
     };
 
     this.reset = function () {
       scope.target.copy(scope.target0);
-      scope.object.position.copy(scope.position0);
-      scope.object.zoom = scope.zoom0;
-      scope.object.updateProjectionMatrix();
+      scope.camera.position.copy(scope.position0);
+      scope.camera.zoom = scope.zoom0;
+      scope.camera.updateProjectionMatrix();
       scope.dispatchEvent(_changeEvent);
       scope.update();
       state = STATE.NONE;
@@ -162,12 +163,14 @@ export class OrbitControls extends Three.EventDispatcher {
       const twoPI = 2 * Math.PI;
 
       return function update() {
-        const position = scope.object.position;
+        const position = scope.camera.position;
         offset.copy(position).sub(scope.target); // rotate offset to "y-axis-is-up" space
 
         offset.applyQuaternion(quat); // angle from z-axis around y-axis
 
-        spherical.setFromVector3(offset);
+        if (this.applySphericalOffset) {
+          spherical.setFromVector3(offset);
+        }
 
         if (scope.autoRotate && state === STATE.NONE) {
           rotateLeft(getAutoRotationAngle());
@@ -222,7 +225,7 @@ export class OrbitControls extends Three.EventDispatcher {
 
         offset.applyQuaternion(quatInverse);
         position.copy(scope.target).add(offset);
-        scope.object.lookAt(scope.target);
+        scope.camera.lookAt(scope.target);
 
         if (scope.enableDamping === true) {
           sphericalDelta.theta *= 1 - scope.dampingFactor;
@@ -239,12 +242,12 @@ export class OrbitControls extends Three.EventDispatcher {
 
         if (
           zoomChanged ||
-          lastPosition.distanceToSquared(scope.object.position) > EPS ||
-          8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS
+          lastPosition.distanceToSquared(scope.camera.position) > EPS ||
+          8 * (1 - lastQuaternion.dot(scope.camera.quaternion)) > EPS
         ) {
           scope.dispatchEvent(_changeEvent);
-          lastPosition.copy(scope.object.position);
-          lastQuaternion.copy(scope.object.quaternion);
+          lastPosition.copy(scope.camera.position);
+          lastQuaternion.copy(scope.camera.quaternion);
           zoomChanged = false;
           return true;
         }
@@ -342,7 +345,7 @@ export class OrbitControls extends Three.EventDispatcher {
           v.setFromMatrixColumn(objectMatrix, 1);
         } else {
           v.setFromMatrixColumn(objectMatrix, 0);
-          v.crossVectors(scope.object.up, v);
+          v.crossVectors(scope.camera.up, v);
         }
 
         v.multiplyScalar(distance);
@@ -355,41 +358,41 @@ export class OrbitControls extends Three.EventDispatcher {
       return function pan(deltaX, deltaY, deltaZ) {
         const element = scope.domElement;
 
-        if (scope.object.isPerspectiveCamera) {
+        if (scope.camera.isPerspectiveCamera) {
           // perspective
-          const position = scope.object.position;
+          const position = scope.camera.position;
           offset.copy(position).sub(scope.target);
           let targetDistance = offset.length(); // half of the fov is center to top of screen
 
           targetDistance *= Math.tan(
-            ((scope.object.fov / 2) * Math.PI) / 180.0
+            ((scope.camera.fov / 2) * Math.PI) / 180.0
           ); // we use only clientHeight here so aspect ratio does not distort speed
 
           panLeft(
             (2 * deltaX * targetDistance) / element.clientHeight,
-            scope.object.matrix
+            scope.camera.matrix
           );
           panForward(
             (2 * deltaZ * targetDistance) / element.clientHeight,
-            scope.object.matrix
+            scope.camera.matrix
           );
           panUp(
             (2 * deltaY * targetDistance) / element.clientHeight,
-            scope.object.matrix
+            scope.camera.matrix
           );
-        } else if (scope.object.isOrthographicCamera) {
+        } else if (scope.camera.isOrthographicCamera) {
           // orthographic
           panLeft(
-            (deltaX * (scope.object.right - scope.object.left)) /
-              scope.object.zoom /
+            (deltaX * (scope.camera.right - scope.camera.left)) /
+              scope.camera.zoom /
               element.clientWidth,
-            scope.object.matrix
+            scope.camera.matrix
           );
           panUp(
-            (deltaY * (scope.object.top - scope.object.bottom)) /
-              scope.object.zoom /
+            (deltaY * (scope.camera.top - scope.camera.bottom)) /
+              scope.camera.zoom /
               element.clientHeight,
-            scope.object.matrix
+            scope.camera.matrix
           );
         } else {
           // camera neither orthographic nor perspective
@@ -402,18 +405,18 @@ export class OrbitControls extends Three.EventDispatcher {
     })();
 
     function dollyOut(dollyScale) {
-      if (scope.object.isPerspectiveCamera) {
+      if (scope.camera.isPerspectiveCamera) {
         const newZoom = scope.zoomCurrent / dollyScale;
         if (newZoom < scope.zoomScaleMax) {
           scale /= dollyScale;
           scope.zoomCurrent = newZoom;
         }
-      } else if (scope.object.isOrthographicCamera) {
-        scope.object.zoom = Math.max(
+      } else if (scope.camera.isOrthographicCamera) {
+        scope.camera.zoom = Math.max(
           scope.minZoom,
-          Math.min(scope.maxZoom, scope.object.zoom * dollyScale)
+          Math.min(scope.maxZoom, scope.camera.zoom * dollyScale)
         );
-        scope.object.updateProjectionMatrix();
+        scope.camera.updateProjectionMatrix();
         zoomChanged = true;
       } else {
         console.warn(
@@ -424,18 +427,18 @@ export class OrbitControls extends Three.EventDispatcher {
     }
 
     function dollyIn(dollyScale) {
-      if (scope.object.isPerspectiveCamera) {
+      if (scope.camera.isPerspectiveCamera) {
         const newZoom = scope.zoomCurrent * dollyScale;
         if (newZoom > scope.zoomScaleMin) {
           scale *= dollyScale;
           scope.zoomCurrent = newZoom;
         }
-      } else if (scope.object.isOrthographicCamera) {
-        scope.object.zoom = Math.max(
+      } else if (scope.camera.isOrthographicCamera) {
+        scope.camera.zoom = Math.max(
           scope.minZoom,
-          Math.min(scope.maxZoom, scope.object.zoom / dollyScale)
+          Math.min(scope.maxZoom, scope.camera.zoom / dollyScale)
         );
-        scope.object.updateProjectionMatrix();
+        scope.camera.updateProjectionMatrix();
         zoomChanged = true;
       } else {
         console.warn(
